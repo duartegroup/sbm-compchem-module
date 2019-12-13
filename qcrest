@@ -1,0 +1,84 @@
+#!/usr/bin/env python
+from __future__ import print_function
+import os
+import argparse
+
+
+def get_args():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filenames", action='store', help='.xyz file to submit to the queue', nargs='+')
+    parser.add_argument("-ca", action='store_true', default=False,
+                        help='Copy all of the files in the current dir')
+    parser.add_argument("-cs", action='store_true', default=False,
+                        help="Copy all files from the scratch directory")
+    parser.add_argument("-chrg", type=int, default=0,
+                        help="Charge of molecule (default 0)")
+    parser.add_argument("-g",
+                        help="Use GBSA implicit solvent")
+    parser.add_argument("-ewin", type=float, default=0,
+                        help="Energy window in kcal/mol (default 6)")
+
+    return parser.parse_args()
+
+
+def print_bash_script(xyz_filename, ca, cs, chrg, g, ewin):
+
+    sh_filename = str(xyz_filename.replace('.xyz', '.sh'))
+
+    with open(sh_filename, 'w') as bash_script:
+        print('#!/bin/bash', file=bash_script)
+        print('#SBATCH --ntasks-per-node=16', file=bash_script)
+        print('#SBATCH --time=6:00:00', file=bash_script)
+        print('#SBATCH --job-name=' + xyz_filename.replace('.xyz', ''), file=bash_script)
+        print('export ORIG=$PWD', file=bash_script)
+        print('export SCR=/scratch/$USER/$SLURM_JOB_ID', file=bash_script)
+        print('mkdir -p $SCR', file=bash_script)
+        print('dos2unix ' + xyz_filename + ' > /dev/null 2>&1', file=bash_script)
+        if ca:
+            print('cp * $SCR', file=bash_script)
+        else:
+            print('cp ' + xyz_filename + ' $SCR', file=bash_script)
+        print('#', file=bash_script)
+        print('cd $SCR', file=bash_script)
+
+        crest_command = "crest " + xyz_filename + " -T 16"
+        if args.chrg:
+            crest_command = crest_command + " -chrg" + str(args.chrg)
+        if args.g:
+            crest_command = crest_command + " -g" + args.g
+        if args.ewin:
+            crest_command = crest_command + " -ewin" + str(args.ewin)
+        crest_command = crest_command + " > $ORIG/" + xyz_filename.replace('.xyz', '.out')
+        print(crest_command, file=bash_script)
+
+        print('rm -f *.tmp', file=bash_script)
+        if cs:
+            print('cp * $ORIG', file=bash_script)
+        else:
+            print('cp *.xyz *.out $ORIG > /dev/null 2>&1', file=bash_script)
+        print('cd / ', file=bash_script)
+        print('rm -Rf $SCR', file=bash_script)
+        print('cd $ORIG', file=bash_script)
+        print('rm "$ORIG"/*.sh*', file=bash_script)
+
+    return sh_filename
+
+
+def run_sbatch(script_filename):
+
+    os.system('sbatch ' + script_filename)
+
+    return 0
+
+
+if __name__ == '__main__':
+
+    args = get_args()
+    for filename in args.filenames:
+        if filename.endswith(".xyz"):
+            sh_filename = print_bash_script(filename, args.ca, args.cs, args.chrg, args.g, args.ewin)
+            run_sbatch(sh_filename)
+        else:
+            print("file {}: not submitted: does not have .xyz extension".format(filename))
+

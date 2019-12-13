@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+from __future__ import print_function
+import os
+import argparse
+
+
+def get_args():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filenames", action='store', help='.inp file(s) sumbit to the queue', nargs='+')
+    parser.add_argument("-ca", action='store_true', default=False,
+                        help='Copy all of the files in the current dir')
+    parser.add_argument("-cs", action='store_true', default=False,
+                        help="Copy all files from the scratch directory")
+    parser.add_argument("-notrashtmp", action='store_true', default=False,
+                        help="Don't trash the temporary files that may be generated")
+
+    return parser.parse_args()
+
+
+def print_bash_script(inp_filename, ca, cs, notrashtmp):
+
+    sh_filename = str(inp_filename.replace('.inp', '.sh'))
+
+    with open(sh_filename, 'w') as bash_script:
+        print('#!/bin/bash', file=bash_script)
+        print('#SBATCH --ntasks-per-node=16', file=bash_script)
+        print('#SBATCH --time=6:00:00', file=bash_script)
+        print('#SBATCH --job-name=' + inp_filename.replace('.inp', ''), file=bash_script)
+        print('module load orca/4.2.0', file=bash_script)
+        print('export ORIG=$PWD', file=bash_script)
+        print('export SCR=/scratch/$USER/$SLURM_JOB_ID', file=bash_script)
+        print('mkdir -p $SCR', file=bash_script)
+        print('dos2unix ' + inp_filename + ' > /dev/null 2>&1', file=bash_script)
+        if ca:
+            print('cp * $SCR', file=bash_script)
+        else:
+            print('cp ' + inp_filename + ' $SCR', file=bash_script)
+        print('#', file=bash_script)
+        print('cd $SCR', file=bash_script)
+        print('/system/software/generic/orca/orca_4_2_0_linux_x86-64/orca $SCR/' + inp_filename + ' > $ORIG/' + inp_filename.replace('.inp', '.out'), file=bash_script)
+        if notrashtmp:
+            pass
+        else:
+            print('rm -f *.tmp', file=bash_script)
+        if cs:
+            print('cp * $ORIG', file=bash_script)
+        else:
+            print('cp *.xyz *.hess *.out $ORIG > /dev/null 2>&1', file=bash_script)
+        print('cd / ', file=bash_script)
+        print('rm -Rf $SCR', file=bash_script)
+        print('cd $ORIG', file=bash_script)
+        print('rm "$ORIG"/*.sh*', file=bash_script)
+        print('rm "$ORIG"/slurm*.out', file=bash_script)
+
+    return sh_filename
+
+
+def run_sbatch(script_filename):
+
+    os.system('sbatch ' + script_filename)
+
+    return 0
+
+
+if __name__ == '__main__':
+
+    args = get_args()
+    for filename in args.filenames:
+        if filename.endswith(".inp"):
+            sh_filename = print_bash_script(filename, args.ca, args.cs, args.notrashtmp)
+            run_sbatch(sh_filename)
+        else:
+            print("file (): not submitted: does not have .inp extension".format(filename))
