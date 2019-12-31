@@ -16,7 +16,8 @@ tar xf crest.tar.xz
 printf "done\n"
 
 printf "Configuring environment variables for CREST... "
-printf "export PATH=$HOME/xtb/bin:$HOME/xtb/crest:$PATH" >> ~/.bash_profile
+printf "export PATH=$HOME/xtb/bin:$HOME/xtb/crest:$PATH\n" >> ~/.bash_profile
+printf "export LD_LIBRARY_PATH=$HOME/xtb/lib64:$LD_LIBRARY_PATH\n" >> ~/.bash_profile
 printf "done\n"
 
 printf "Downloading qcrest submission script... "
