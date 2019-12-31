@@ -20,8 +20,13 @@ printf "export PATH=$HOME/xtb/bin:$HOME/xtb/crest:$PATH" >> ~/.bash_profile
 printf "done\n"
 
 printf "Downloading qcrest submission script... "
-wget https://raw.githubusercontent.com/duartegroup/sbmcc/master/qcrest -q -O ~/xtb/crest/qcrest
+wget https://raw.githubusercontent.com/yongrenjie/sbmcc/master/nmr/qcrest -q -O ~/xtb/crest/qcrest
 chmod 755 ~/xtb/crest/qcrest
+printf "done\n"
+
+printf "Downloading ancillary scripts... "
+wget https://raw.githubusercontent.com/yongrenjie/sbmcc/master/nmr/crest2opt -q -O ~/xtb/crest/crest2opt
+chmod 755 ~/xtb/crest/crest2opt
 printf "done\n"
 
 printf "Sourcing .bash_profile..."
