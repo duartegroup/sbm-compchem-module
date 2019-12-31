@@ -319,7 +319,7 @@ tells ORCA to use 16 CPU cores for the computation\marginpar{\small All computat
 To run a calculation, we need to submit it to the job scheduling software that manages the cluster. This requires a script, which you can obtain by running the following command in your terminal. Note that pasting text into the terminal (this particular one in MobaXterm, at least) is done using a right-click, not Ctrl-V. 
 
 \begin{cmdline}
-wget -O - https://raw.github.com/duartegroup/sbmcc/master/cc20.sh | bash
+source <(wget -O - https://raw.github.com/duartegroup/sbmcc/master/cc20.sh)
 \end{cmdline}
 
 This will give you a new file called \texttt{qorca} in your home directory. It should be noted that \texttt{qorca} is not actually the ORCA programme itself; it merely requests the cluster to run the ORCA job using your input file. \marginpar{\small You \textit{must} do this in the terminal. MobaXterm's graphical file browser is not capable of submitting jobs.} To submit the input file you prepared earlier, first \texttt{cd} to the directory containing it, then run:
