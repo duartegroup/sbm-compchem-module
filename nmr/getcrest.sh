@@ -28,6 +28,8 @@ printf "done\n"
 printf "Downloading ancillary scripts... "
 wget https://raw.githubusercontent.com/yongrenjie/sbmcc/master/nmr/crest2opt -q -O ~/xtb/crest/crest2opt
 chmod 755 ~/xtb/crest/crest2opt
+wget https://raw.githubusercontent.com/yongrenjie/sbmcc/master/nmr/opt2sp -q -O ~/xtb/crest/opt2sp
+chmod 755 ~/xtb/crest/opt2sp
 printf "done\n"
 
 printf "Sourcing .bash_profile..."
