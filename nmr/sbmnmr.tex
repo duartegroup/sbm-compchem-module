@@ -1,0 +1,217 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,
+            tmargin=3cm,
+            bmargin=3cm,
+            lmargin=2cm,
+            rmargin=2cm]{geometry}
+
+% Don't necessarily need all of these, I just copied from my standard LaTeX config
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage[hidelinks]{hyperref}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{booktabs}
+\hbadness 10000 % suppresses underfull hbox errors which are common with marginpar
+\usepackage{float}
+\usepackage[labelfont=it]{caption}
+\captionsetup{belowskip=-0.4cm}
+\newcommand{\figref}[1]{\textit{Figure \ref{fig:#1}}}
+\usepackage{enumitem}
+\usepackage{cmap}
+\usepackage[scaled=0.8]{beramono} % This is nice because the tilde isn't at the top of the line.
+\usepackage[T1]{fontenc}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\lstdefinestyle{tcbscript}{language={},
+     belowskip=2pt, aboveskip=2pt,
+     columns=fullflexible, keepspaces=true,
+     breaklines=true, breakatwhitespace=true,
+     basicstyle=\ttfamily\small, extendedchars=true, nolol
+     }
+\newtcblisting{script}[1]{
+    title=#1,
+    fontupper=\ttfamily,
+    fonttitle=\bfseries,
+    colframe=blue!60!gray,
+    colback=blue!5,
+    width=0.95\textwidth,
+    center,
+    listing only,
+    listing style=tcbscript,
+    beforeafter skip=0.45cm
+}
+\newtcblisting{cmdline}{
+    fontupper=\ttfamily,
+    colframe=white, opacityframe=0, % transparent
+    colback=white, opacityback=0, % transparent
+    width=0.95\textwidth,
+    center,
+    listing only,
+    listing style=tcbscript,
+    beforeafter skip=-0.05cm
+}
+\newtcolorbox{warning}[0]{
+    center,
+    width=0.95\textwidth,
+    colback=red!5!white,
+    colframe=red!75!black,
+    fonttitle=\bfseries,
+    title=Warning,
+    beforeafter skip=0.45cm
+}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{chemmacros}
+\usepackage{siunitx}
+\usepackage{upgreek}
+
+% Bibliography
+\usepackage[style=chem-acs,biblabel=dot,subentry]{biblatex}
+\addbibresource{sbmnmr.bib}
+
+\usepackage{fancyhdr}
+ 
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{SBM CDT 2020}
+\lhead{Practical Computational Chemistry Module: NMR Properties}
+\cfoot{\thepage}
+\begin{document}
+
+\textbf{\LARGE NMR calculations in ORCA}
+
+\vspace{0.5cm}
+
+We will look at the three candidate structures for cordycepol A, proposed by Reddy and Kutateladze in 2016.\autocite{Reddy2016} The experimental data can be found in Table 1 of the article.
+
+\begin{warning}
+We \textbf{strongly} recommend that you create a separate directory for each of the following sections, or it can get very messy!
+\end{warning}
+
+\section{Conformer generation}
+
+NMR properties, such as chemical shifts and coupling constants, are calculated as averages over multiple low-energy conformers. In order to calculate the NMR properties of a molecule, the first step is to generate a sufficiently large ensemble of conformers. This is most commonly done with methods based on molecular dynamics; here we will utilise the \textit{Conformer--Rotamer Ensemble Sampling Tool} (CREST), a programme developed by Stefan Grimme.\autocite{Bannwarth2019, Grimme2019} First, download and install the CREST programme using:
+
+\begin{cmdline}
+source <(wget -O - https://raw.github.com/yongrenjie/sbmcc/master/nmr/getcrest.sh)
+\end{cmdline}
+
+To generate conformers for a molecule, first create an appropriate \texttt{.xyz} file (in Avogadro: use \textbf{File > Save As...} after you finish drawing the molecule). Upload it onto the cluster and submit the CREST job using
+
+\begin{cmdline}
+qcrest <molecule>.xyz
+\end{cmdline}
+
+When the job is complete, you can access the output at \texttt{<molecule>.out}. The bottom of this file will tell you the number of conformers found, as well as their energies (in kcal/mol). The conformer geometries can be found in \texttt{crest\_conformers.xyz}. The other \texttt{.xyz} files are just collections of unoptimised or unfiltered conformers, and can be safely ignored.
+
+
+\section{Geometry optimisation}
+
+The conformers that were previously found are optimised using the semi-empirical model GFN2-xTB.\autocite{Bannwarth2019} To obtain more accurate geometries, it is typical to perform a second optimisation using a higher level of theory, and we will use ORCA for this.
+
+We need to create an input file for each conformer generated: this means that \texttt{crest\_conformers.xyz} needs to be split up into many files. For a small number of conformers, this can be done by hand, but for a larger number it is necessary to write a script to automate the task, such as the one which we will now use. Copy \texttt{crest\_conformers.xyz} to a different folder (bearing in mind our earlier warning), \texttt{cd} to that folder, and run
+
+\begin{cmdline}
+crest2opt
+\end{cmdline}
+
+The script will prompt you to enter the keyword line for the ORCA optimisation. This will allow you to choose the level of theory. We suggest using 
+
+\begin{cmdline}
+! PBEh-3c CPCM(Chloroform) Opt
+\end{cmdline}
+
+Here, \texttt{PBEh-3c} is a reasonably low-cost method which provides decent geometries for organic molecules. The original NMR data\autocite{Sun2013} were acquired in \ce{CDCl3}, and the \texttt{CPCM(Chloroform)} keyword requests an implicit solvation model to account for that. Feel free to choose a different level of theory, but do not be over-ambitious, especially if you find that you have many conformers to optimise! In particular, it's not usually worth using anything more than a double-zeta basis set.
+
+You can submit \textit{all} the input files at once using \texttt{qorca *.inp}. The asterisk acts as a wildcard. When your optimisations are complete (check using \texttt{squeue -u <username>}), move on to the next section.
+
+
+\section{Single-point energies}
+
+The \textit{geometries} obtained with \texttt{PBEh-3c} (or whatever you used) are probably sufficiently accurate, but the \textit{energies} can (and should) be re-calculated using an even higher level of theory, since single-point calculations are cheap. To do this, copy all the final geometries to yet another new folder. You can do this from the command line (after making the directory) with
+
+\begin{cmdline}
+cp *.opt.xyz <target_directory>
+\end{cmdline}
+
+Searching for \texttt{*.opt.xyz}, and not \texttt{*.xyz}, conveniently ignores all the \texttt{.opt\_trj.xyz} files which ORCA generates as part of the optimisation output (these are \textit{trajectory} files which illustrate how the optimisation proceeds, but we are not particularly interested in them here).
+
+As before, we have a helper script which converts the optimised geometries into ORCA input files. \texttt{cd} to this new directory which contains all the \texttt{.opt.xyz} files and run
+
+\begin{cmdline}
+opt2sp
+\end{cmdline}
+
+You can choose a suitable level of theory here: just make sure that everybody in the group uses the same choice, or the results will not be comparable. A sensible choice would be a hybrid functional combined with a triple-zeta basis set. Try to include dispersion corrections (using the keyword \texttt{D3}, only available with some functionals: see \url{https://www.chemie.uni-bonn.de/pctc/mulliken-center/software/dft-d3/functionalsbj}) and solvation (\texttt{CPCM(Chloroform)}, as before).
+
+Once these are all done, run
+
+\begin{cmdline}
+grep "FINAL SINGLE POINT ENERGY" *.out
+\end{cmdline}
+
+This will print all the calculated energies (in hartrees). You should now perform some kind of filtering to remove high-energy conformers which do not contribute significantly to the Boltzmann-averaged properties (but as always, make sure this is done in a consistent manner). Ideally, you should be left with a number of conformers for which the remaining steps can be reasonably done ``by hand''. As a reminder, the population \(p_i\) of conformer \(i\) with energy \(\varepsilon_i\) is given by:
+
+\[ p_i = \frac{\exp(-\varepsilon_i/k_\mathrm{B}T)}{\sum_j \exp(-\varepsilon_j/k_\mathrm{B}T)} \]
+
+where the sum in the denominator (the partition function) runs over all conformers, including conformer \(i\) itself.
+
+\newpage
+
+\section{Chemical shifts}
+
+Copy the \texttt{.opt.xyz} files which survived the previous filtering step to yet another new directory. You should now manually construct the ORCA input file for calculations of chemical shifts using the following example (see also \S8.15.6 of the ORCA 4.2.1 manual):
+
+\begin{script}{sample\_nmr.inp}
+! FUNC BASIS AUXBASIS D3 CPCM(Chloroform)
+
+%pal nprocs 16 end
+
+*xyz 0 1
+... (coordinates go here) ...
+*
+
+%eprnmr
+  Ori GIAO
+  Nuclei = all C { shift, ist = 13 };
+  Nuclei = all H { shift, ist = 1 };
+end
+\end{script}
+
+\texttt{GIAO} stands for \textit{gauge-independent atomic orbitals} (or \textit{including} or \textit{invariant}; chemists can't seem to make up their minds). This is the most widely-used method for calculating NMR chemical shifts (more information on this can be found in the recommended books). You should be comfortable with \texttt{FUNC} and \texttt{BASIS}, but \texttt{AUXBASIS} is probably new to you. This refers to an auxiliary basis set, which is used by ORCA when approximating certain integrals. For now, it suffices to follow this table when choosing \texttt{AUXBASIS}:
+
+\begin{center}
+    \begin{tabular}{cc}
+        \toprule
+        \texttt{BASIS} & Appropriate \texttt{AUXBASIS} \\ \midrule
+        \texttt{def2} family & \texttt{def2/JK} \\
+        \texttt{cc-pVnZ} family & \texttt{cc-pVnZ/JK} \\
+        Anything else & \texttt{AutoAux} \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+When the calculation finishes, there will be a section at the bottom of the output file containing a \texttt{CHEMICAL SHIELDING SUMMARY}. The \textit{isotropic} shielding is the number that we are after (because molecules in solution undergo rapid tumbling and experience all possible orientations). You need to perform a Boltzmann average:
+
+\[ \sigma_{\text{avg}} = \sum_i \sigma_i p_i = \frac{\sum_i \sigma_i \exp{(-\varepsilon_i/k_\mathrm{B}T)}}{\sum_i \exp{(-\varepsilon_i/k_\mathrm{B}T})} \]
+
+and that's it...\ or is it? In fact, you will find that the \textit{chemical shielding} is markedly different from the \textit{chemical shift}, the parameter conventionally reported in journals. To convert the shieldings to shifts, we need a benchmark molecule, and a convenient molecule to use is tetramethylsilane, since its chemical shifts (both proton and carbon) should be identically zero.
+
+So, you will need to optimise the geometry of TMS and calculate its chemical shieldings. Make sure to use the same levels of theory as before. Since there should only be one conformer, there's no need to perform conformer generation or the single-points. After averaging over all the symmetry-equivalent nuclei (four carbons or twelve protons), you should obtain the relevant shielding, which we denote \(\sigma_{\text{TMS}}\). Then, for the original molecule, we have:
+
+\[ \delta = \sigma_{\text{TMS}} - \sigma \]
+
+where \(\delta\) is the chemical shift in units of ppm (notice that ORCA reports shieldings in units of ppm, so no other conversion is required).
+
+\section{Coupling constants}
+
+To be written...
+
+\printbibliography
+
+\end{document}
