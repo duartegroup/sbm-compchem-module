@@ -21,14 +21,14 @@ printf "export LD_LIBRARY_PATH=$HOME/xtb/lib64:$LD_LIBRARY_PATH\n" >> ~/.bash_pr
 printf "done\n"
 
 printf "Downloading qcrest submission script... "
-wget https://raw.githubusercontent.com/yongrenjie/sbmcc/master/nmr/qcrest -q -O ~/xtb/crest/qcrest
+wget https://raw.githubusercontent.com/duartegroup/sbmcc/master/nmr/qcrest -q -O ~/xtb/crest/qcrest
 chmod 755 ~/xtb/crest/qcrest
 printf "done\n"
 
 printf "Downloading ancillary scripts... "
-wget https://raw.githubusercontent.com/yongrenjie/sbmcc/master/nmr/crest2opt -q -O ~/xtb/crest/crest2opt
+wget https://raw.githubusercontent.com/duartegroup/sbmcc/master/nmr/crest2opt -q -O ~/xtb/crest/crest2opt
 chmod 755 ~/xtb/crest/crest2opt
-wget https://raw.githubusercontent.com/yongrenjie/sbmcc/master/nmr/opt2sp -q -O ~/xtb/crest/opt2sp
+wget https://raw.githubusercontent.com/duartegroup/sbmcc/master/nmr/opt2sp -q -O ~/xtb/crest/opt2sp
 chmod 755 ~/xtb/crest/opt2sp
 printf "done\n"
 

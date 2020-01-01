@@ -100,7 +100,7 @@ We \textbf{strongly} recommend that you create a separate directory for each of 
 NMR properties, such as chemical shifts and coupling constants, are calculated as averages over multiple low-energy conformers. In order to calculate the NMR properties of a molecule, the first step is to generate a sufficiently large ensemble of conformers. This is most commonly done with methods based on molecular dynamics; here we will utilise the \textit{Conformer--Rotamer Ensemble Sampling Tool} (CREST), a programme developed by Stefan Grimme.\autocite{Bannwarth2019, Grimme2019} First, download and install the CREST programme using:
 
 \begin{cmdline}
-source <(wget -O - https://raw.github.com/yongrenjie/sbmcc/master/nmr/getcrest.sh)
+source <(wget -O - https://raw.github.com/duartegroup/sbmcc/master/nmr/getcrest.sh)
 \end{cmdline}
 
 To generate conformers for a molecule, first create an appropriate \texttt{.xyz} file (in Avogadro: use \textbf{File > Save As...} after you finish drawing the molecule). Upload it onto the cluster and submit the CREST job using
