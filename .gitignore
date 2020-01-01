@@ -1,2 +1,18 @@
 
 .idea/
+
+# auxiliary LaTeX files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.listing
+*.log
+*.out
+*.run.xml
+
+# vim swap files
+*.swp
