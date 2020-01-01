@@ -83,11 +83,13 @@
 \cfoot{\thepage}
 \begin{document}
 
+% Jonathan Yong, 1 Jan 2020
+
 \textbf{\LARGE NMR calculations in ORCA}
 
 \vspace{0.5cm}
 
-We will look at the three candidate structures for cordycepol A, proposed by Reddy and Kutateladze in 2016.\autocite{Reddy2016} The experimental data can be found in Table 1 of the article.
+We will look at the three candidate structures for cordycepol A, proposed by Reddy and Kutateladze in 2016.\autocite{Reddy2016} You should calculate chemical shifts, and key coupling constants, for all three candidates. From these, you can determine which is most likely to be the correct structure by comparison against the experimental shifts.
 
 \begin{warning}
 We \textbf{strongly} recommend that you create a separate directory for each of the following sections, or it can get very messy!
@@ -167,7 +169,7 @@ where the sum in the denominator (the partition function) runs over all conforme
 
 Copy the \texttt{.opt.xyz} files which survived the previous filtering step to yet another new directory. You should now manually construct the ORCA input file for calculations of chemical shifts using the following example (see also \S8.15.6 of the ORCA 4.2.1 manual):
 
-\begin{script}{sample\_nmr.inp}
+\begin{script}{sample\_shifts.inp}
 ! FUNC BASIS AUXBASIS D3 CPCM(Chloroform)
 
 %pal nprocs 16 end
@@ -210,7 +212,49 @@ where \(\delta\) is the chemical shift in units of ppm (notice that ORCA reports
 
 \section{Coupling constants}
 
-To be written...
+To calculate the coupling constants, the general format for the input file is:
+
+\begin{script}{sample\_couplings.inp}
+! FUNC BASIS D3 CPCM(Chloroform)
+
+%pal nprocs 16 end
+
+*xyz 0 1
+... (coordinates go here) ...
+*
+
+%eprnmr
+  Nuclei = all H { ssfc, ist = 1 };
+  SpinSpinRThresh 3.6
+end
+\end{script}
+
+First, note that \texttt{AUXBASIS} and \texttt{Ori GIAO} are no longer needed. Another difference is that the keyword \texttt{shift} has been changed to \texttt{ssfc}: this stands for \textit{spin--spin} [coupling constant], \textit{Fermi contact} term. In general there are four terms that contribute to the coupling constant, but the Fermi contact term is by far the most important, at least for proton--proton couplings. Calculating only this term saves a lot of time.
+
+There is a new addition inside the \texttt{\%eprnmr} block, namely the \texttt{SpinSpinRThresh} keyword. This instructs ORCA to only calculate couplings between atoms that are within \SI{3.6}{\angstrom}; this is a safe value to use if we are only interested in \({}^{2}J\) and \({}^{3}J\).
+
+Unfortunately, in ORCA, there is no way to specify \textit{exactly} which pairs of atoms we want to calculate the couplings for. Instead, the syntax of the \texttt{\%eprnmr} block specifies a \textit{list} of atoms for which we are interested; ORCA then calculates all couplings between each of those atoms and nearby atoms within \texttt{SpinSpinRThresh}.
+
+In the example above, this list of atoms that we are interested in simply consists of \texttt{all H} atoms. There is no point including \texttt{all C} as well for \ce{C-H} couplings, because as long as a carbon is within \texttt{SpinSpinRThresh} of a proton, the corresponding coupling will be calculated.
+
+If we want to pare down this list further (e.g.\ restrict it to only certain protons of interest), then we just need to replace \texttt{all H} with a comma-separated list of atom numbers. For example,
+
+\begin{cmdline}
+%eprnmr
+  Nuclei = 2, 3, 4 { ssfc, ist = 1 }
+  SpinSpinRThresh 3.6
+end
+\end{cmdline}
+
+will calculate all couplings between proton number 2 and neighbours within \SI{3.6}{\angstrom} of it; then the same for protons 3 and 4.
+
+\begin{warning}
+Within the \texttt{\%eprnmr} block, atom labels are counted \textbf{beginning from 1, not 0}.
+\end{warning}
+
+So, the atom number that you use here will correspond \textbf{exactly} to those that are shown in Avogadro. Or in other words, they will be one greater than usual, since the usual atom numbers are those in Avogadro minus one.
+
+Confusingly, in the \textit{output}, the atom numbering returns to ``normal'' and is counted from 0 again. As with the previous section, the quantity we are looking for is the isotropic coupling, labelled with \texttt{iso}. These are in units of Hz and do not require any further scaling, so are ready to use right away.
 
 \printbibliography
 
