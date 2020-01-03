@@ -41,6 +41,7 @@ def print_bash_script(xyz_filename, ca, cs, chrg, g, ewin):
             print('cp ' + xyz_filename + ' $SCR', file=bash_script)
         print('#', file=bash_script)
         print('cd $SCR', file=bash_script)
+        print('module load openmpi/3.1.0__intel-2018', file=bash_script)
 
         crest_command = "crest " + xyz_filename + " -T 16"
         if args.chrg:

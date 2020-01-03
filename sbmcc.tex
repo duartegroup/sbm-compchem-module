@@ -87,7 +87,7 @@
 
 \textbf{\LARGE Getting Started -- Day 1}
 
-\vspace{0.5cm}
+\vspace{0.2cm}
 
 \begin{tabular}{ll} % alphabetical surname order... And Fernanda should go first!
     \textbf{Tutors:} & Fernanda Duarte (fernanda.duartegonzalez@chem.ox.ac.uk) \\
@@ -95,11 +95,11 @@
      & Tom Young (tom.young@balliol.ox.ac.uk)
 \end{tabular}
 
-\vspace{0.5cm}
+\vspace{0.2cm}
 
 Welcome! In this set of exercises you will gain some hands-on experience in connecting to a remote cluster, creating input files for the computational chemistry programme ORCA, and submitting the calculations to the cluster's job management system. \marginpar{\small We will not discuss the theory behind the calculations: if you are interested, a few suggestions for books can be found in the \textit{Other resources} section at the end of this handout.}
 
-Before starting, please install \textbf{MobaXterm} (from the Software Centre), \textbf{Avogadro} (version 1.2.0 from \url{https://avogadro.cc/}; the version in the Software Centre, 1.1.1, is not sufficent). You will need both these programmes to complete the following exercises.
+Before starting, please install \textbf{MobaXterm} (from the Software Centre), \textbf{Avogadro} (version 1.2.0 from \url{https://avogadro.cc/}; the version in the Software Centre, 1.1.1, is not sufficent). You will need both these programmes to complete the following exercises. We also recommend installing a plain text editor such as \textbf{Notepad++} (\url{https://notepad-plus-plus.org/}).
 
 As we go along, there will be certain sections where you are asked to note down a value or to answer some questions. \textbf{You will need to submit a short writeup (approximately one page long) containing these at the end of the course.}
 
@@ -285,9 +285,7 @@ Press the \textbf{Start} button, and Avogadro will perform a quick optimisation 
 
 \section{Submitting jobs to the cluster}
 
-To run a calculation, we first need to get an input file onto the cluster. There are two main ways to do this. The first is to prepare the input file on your own computer, then drag-and-drop it into the MobaXterm pane.\marginpar{\small If you get tired of Notepad, you may want to install a text editor that is more friendly: we suggest either Atom or Notepad++ (both free).} \textbf{Make sure you use a plain text editor, such as Notepad, to prepare input files.} Programmes like Microsoft Word will not work as they add extra information about text formatting and layout.
-
-Alternatively, you can edit files on the cluster using the text editor built into MobaXterm. Once you have a file on the cluster (either by creating it from the terminal using \texttt{touch}, or by dragging-and-dropping), you can right-click it in the MobaXterm browser and select \textbf{Open with default text editor} (\figref{texteditor}).\marginpar{\small There is a third way, which is to use terminal-based text editors such as \texttt{vim}, \texttt{nano}, or \texttt{emacs}. Although these are powerful tools, they also come with a steep initial learning curve.}
+To run a calculation, we first need to get an input file onto the cluster. There are two main ways to do this. The first is to prepare the input file on your own computer, then drag-and-drop it into the MobaXterm pane. \textbf{Make sure you use a plain text editor, such as Notepad++, to prepare input files.} Programmes like Microsoft Word will not work as they add extra information about text formatting and layout.\marginpar{\small There is a third way, which is to use terminal-based text editors such as \texttt{vim}, \texttt{nano}, or \texttt{emacs}. Although these are powerful tools, they also come with a steep initial learning curve.}
 
 \begin{figure}[H]
     \centering
@@ -296,7 +294,9 @@ Alternatively, you can edit files on the cluster using the text editor built int
     \label{fig:texteditor}
 \end{figure}
 
-Your first exercise will be to calculate the energy of cyclohexane, using the geometry pre-optimised by Avogadro. We will stick with the same level of theory as before, namely \texttt{BP86} and \texttt{def2-SVP}, as this is capable of reaching ``chemical accuracy'' while also being relatively computationally cheap. Your input file will look somewhat like the snippet below. We have suggested the name \texttt{c6h12\_sp.inp}, but you can give it any name you like, as long as you start with a letter and end with the file extension \texttt{.inp}.\marginpar{\small If you are using Notepad, when you save a file, make sure to select \textbf{All Files} from the \textbf{Save as type...} dropdown box. Otherwise, Notepad will automatically tack on a \texttt{.txt} extension.}
+Alternatively, you can edit files on the cluster using the text editor built into MobaXterm. Once you have a file on the cluster (either by creating it from the terminal using \texttt{touch}, or by dragging-and-dropping), you can right-click it in the MobaXterm browser and select \textbf{Open with default text editor} (\figref{texteditor}).
+
+Your first exercise will be to calculate the energy of cyclohexane, using the geometry pre-optimised by Avogadro. We will stick with the same level of theory as before, namely \texttt{BP86} and \texttt{def2-SVP}, as this is capable of reaching ``chemical accuracy'' while also being relatively computationally cheap. Your input file will look somewhat like the snippet below. We have suggested the name \texttt{c6h12\_sp.inp}, but you can give it any name you like, as long as you start with a letter and end with the file extension \texttt{.inp}.
 
 \begin{script}{c6h12\_sp.inp}
 ! BP86 def2-SVP SP
@@ -319,7 +319,7 @@ tells ORCA to use 16 CPU cores for the computation\marginpar{\small All computat
 To run a calculation, we need to submit it to the job scheduling software that manages the cluster. This requires a script, which you can obtain by running the following command in your terminal. Note that pasting text into the terminal (this particular one in MobaXterm, at least) is done using a right-click, not Ctrl-V. 
 
 \begin{cmdline}
-wget -O - https://raw.github.com/duartegroup/sbmcc/master/cc20.sh | bash
+source <(wget -O - https://raw.github.com/duartegroup/sbmcc/master/cc20.sh)
 \end{cmdline}
 
 This will give you a new file called \texttt{qorca} in your home directory. It should be noted that \texttt{qorca} is not actually the ORCA programme itself; it merely requests the cluster to run the ORCA job using your input file. \marginpar{\small You \textit{must} do this in the terminal. MobaXterm's graphical file browser is not capable of submitting jobs.} To submit the input file you prepared earlier, first \texttt{cd} to the directory containing it, then run:
@@ -351,7 +351,7 @@ TOTAL RUN TIME: 0 days 0 hours 0 minutes 16 seconds 827 msec
 
 \begin{summary}
     \begin{itemize}[leftmargin=0.6cm]
-        \item Input files can be prepared on your own desktop (using e.g.\ Notepad) or on the terminal (using MobaXterm's editor).
+        \item Input files can be prepared on your own desktop (using e.g.\ Notepad++) or on the terminal (using MobaXterm's editor).
         \item You can submit jobs on the cluster from the terminal using the \texttt{qorca} script.
         \item Job progress can be monitored using either \texttt{squeue} or \texttt{tail}.
     \end{itemize}
@@ -361,7 +361,7 @@ TOTAL RUN TIME: 0 days 0 hours 0 minutes 16 seconds 827 msec
 
 If your job ran successfully, the output file should contain in excess of 1000 lines. For a more complicated calculation, such as an optimisation (which you will do soon), this number can grow very rapidly! How do we pick out the important information from all of that text?
 
-One way is to manually inspect the file and look for certain keywords, which we will do now. Open up the output file \texttt{c6h12\_sp.out}, either by dragging it back to your desktop and using Notepad, or by using the built-in MobaXterm editor. Look for a line near the end that reads \texttt{FINAL SINGLE POINT ENERGY}: this is the energy of your molecule in that particular geometry. Take note of this number.
+One way is to manually inspect the file and look for certain keywords, which we will do now. Open up the output file \texttt{c6h12\_sp.out}, either by dragging it back to your desktop and using Notepad++, or by using the built-in MobaXterm editor. Look for a line near the end that reads \texttt{FINAL SINGLE POINT ENERGY}: this is the energy of your molecule in that particular geometry. Take note of this number.
 
 Alternatively, we can use software to help us parse the output file. Avogadro is capable of doing this (to some extent). If you haven't already done so, copy your output file back to your own computer, then open it with Avogadro. It will display the final geometry from the ORCA calculation. Since this was a single-point calculation, ORCA does not change the geometry, so it will be exactly the same as the geometry you submitted. Use the \textbf{Measure Tool} (\figref{avoopt}) to measure some of the key properties listed below:\marginpar{\small We already learnt that bond lengths are specified in angstroms. You should now do some research to find out what the units of energy in computational chemistry are, and how they relate to familiar units such as kcal/mol or kJ/mol.}
 
@@ -533,8 +533,6 @@ orca_pltvib malon_ts.hess 6
     \end{itemize}
 \end{summary}
 
-\newpage
-
 \section{Other resources}
 
 \textbf{Books}
@@ -566,15 +564,15 @@ orca_pltvib malon_ts.hess 6
     \item Each group will have to prepare a (15 + 5) minute presentation for the last day.  The presentation should include background about the paper; the rationale behind the technique used; and analysis of the most relevant computational results which your group obtained. Any novel aspect explored will be a plus.
 \end{itemize}
 
-\section{Projects}
+\section*{Projects}
 
 
 \begin{enumerate}
     \item \href{https://doi.org/10.1038/s41557-018-0079-7}{\textcolor{blue}{Concerted Nucleophilic Aromatic Substitutions}}
 
-          E. E Kwan, Y. Zeng, H. A. Besser, E. N. Jacobsen. {\it Nat. Chem.} {\bf 2018}, 10, 917--923. DOI: 10.1038/s41557-018-0079-7.
+        E.\ E.\ Kwan, Y.\ Zeng, H.\ A.\ Besser, E.\ N.\ Jacobsen. \textit{Nat. Chem.} \textbf{2018,} \textit{10,} 917--923. DOI: 10.1038/s41557-018-0079-7.
  
-          \textbf{Abstract}: Nucleophilic aromatic substitution (S\textsubscript{N}Ar) is one of the most widely applied reaction classes in pharmaceutical and chemical research, providing a broadly useful platform for the modification of aromatic ring scaffolds. The generally accepted mechanism for S\textsubscript{N}Ar reactions involves a two-step addition–elimination sequence via a discrete, non-aromatic Meisenheimer complex. Here we use \ce{^{12}C}/\ce{^{13}C} kinetic isotope effect (KIE) studies and computational analyses to provide evidence that prototypical S\textsubscript{N}Ar reactions in fact proceed through concerted mechanisms. The KIE measurements were made possible by a new technique that leverages the high sensitivity of \ce{^{19}F} as an NMR nucleus to quantitate the degree of isotopic fractionation. This sensitive technique permits the measurement of KIEs on 10 mg of natural abundance material in one overnight acquisition. As a result, it provides a practical tool for performing detailed mechanistic analyses of reactions that form or break C--F bonds.
+          \textbf{Abstract}: Nucleophilic aromatic substitution (S\textsubscript{N}Ar) is one of the most widely applied reaction classes in pharmaceutical and chemical research, providing a broadly useful platform for the modification of aromatic ring scaffolds. The generally accepted mechanism for S\textsubscript{N}Ar reactions involves a two-step addition--elimination sequence via a discrete, non-aromatic Meisenheimer complex. Here we use \ce{^{12}C}/\ce{^{13}C} kinetic isotope effect (KIE) studies and computational analyses to provide evidence that prototypical S\textsubscript{N}Ar reactions in fact proceed through concerted mechanisms. The KIE measurements were made possible by a new technique that leverages the high sensitivity of \ce{^{19}F} as an NMR nucleus to quantitate the degree of isotopic fractionation. This sensitive technique permits the measurement of KIEs on 10 mg of natural abundance material in one overnight acquisition. As a result, it provides a practical tool for performing detailed mechanistic analyses of reactions that form or break C--F bonds.
 
           \textbf{Technique}: Density Functional Theory; \textbf{Software}: {ORCA}
 
@@ -582,7 +580,7 @@ orca_pltvib malon_ts.hess 6
 
     \item \href{https://doi.org/10.1039/C6CC07875C}{\textcolor{blue}{A DFT Study of the Role of Water in the Rhodium-Catalyzed Hydrogenation of Acetone}}
 
-          V. Polo, R. R. Schrock and L. A. Oro. {\it Chem. Commun.} {\bf 2016}, 52, 13881--13884. DOI: 10.1039/C6CC07875C.
+        V.\ Polo, R.\ R.\ Schrock and L.\ A.\ Oro. \textit{Chem.\ Commun.} \textbf{2016,} \textit{52,} 13881--13884. DOI: 10.1039/C6CC07875C.
  
           \textbf{Abstract}:The positive effect of the addition of water to acetone hydrogenation by \ce{[RhH2(PR3)2S2]+} catalysts has been studied by DFT calculations. The studied energetic profiles reveal that the more favourable mechanistic path involves a hydride migration to the ketone followed by a reductive elimination that is assisted by two water molecules.
 
@@ -592,7 +590,7 @@ orca_pltvib malon_ts.hess 6
 
     \item \href{https://doi.org/10.1021/acs.orglett.6b02341}{\textcolor{blue}{Structure Revision of an Acorane Sesquiterpene Cordycepol A}}
 
-          D. S. Reddy, A. G. Kutateladze. {\it Org. Lett.} {\bf 2016}, 18, 4860--4863.\\DOI: 10.1021/acs.orglett.6b02341.
+        D.\ S.\ Reddy, A.\ G.\ Kutateladze. \textit{Org.\ Lett.} \textbf{2016}, \textit{18,} 4860--4863.\\DOI: 10.1021/acs.orglett.6b02341.
  
           \textbf{Abstract}: Structure revision of a recently reported spirodecane sesquiterpene, cordycepol A, from fungi Cordyceps ophioglossoides was enabled by fast and accurate calculations of nuclear spin-spin coupling constants (SSCCs) with a relativistic force field (DU8c) parametric method. Two other reported cordycepols, B and C, are also identified as misassigned. Calculations of accurate SSCCs, which contain a wealth of structural information, offer a chemically intuitive tool for structure elucidation, rendering the whole structure revision process more guided and intentional, while augmenting in a synergistic way the calculations of chemical shifts.
 
@@ -602,9 +600,9 @@ orca_pltvib malon_ts.hess 6
   
     \item \href{https://doi.org/10.1021/acscatal.5b01639}{\textcolor{blue}{Expanding the Catalytic Triad in Epoxide Hydrolases and Related Enzymes}}
 
-          B. A. Amrein, P. Bauer, F. Duarte, A. J. Carlsson, A. Naworyta, S. L. Mowbray, M. Widersten and S. C. L. Kamerlin, {\it ACS Catal.} {\bf 2015}, 5, 5702--5713. DOI: 10.1021/acscatal.5b01639.
+        B.\ A.\ Amrein, P.\ Bauer, F.\ Duarte, A.\ J.\ Carlsson, A.\ Naworyta, S.\ L.\ Mowbray, M.\ Widersten and S.\ C.\ L.\ Kamerlin, \textit{ACS Catal.} \textbf{2015}, \textit{5,} 5702--5713. DOI: 10.1021/acscatal.5b01639.
 
-          \textbf{Abstract}: Potato epoxide hydrolase 1 exhibits rich enantio- and regioselectivity in the hydrolysis of a broad range of substrates. The enzyme can be engineered to increase the yield of optically pure products as a result of changes in both enantio- and regioselectivity. It is thus highly attractive in biocatalysis, particularly for the generation of enantiopure fine chemicals and pharmaceuticals. The present work aims to establish the principles underlying the activity and selectivity of the enzyme through a combined computational, structural, and kinetic study using the substrate trans-stilbene oxide as a model system. Extensive empirical valence bond simulations have been performed on the wild-type enzyme together with several experimentally characterized mutants. We are able to computationally reproduce the differences between the activities of different stereoisomers of the substrate and the effects of mutations of several active-site residues. In addition, our results indicate the involvement of a previously neglected residue, H104, which is electrostatically linked to the general base H300. We find that this residue, which is highly conserved in epoxide hydrolases and related hydrolytic enzymes, needs to be in its protonated form in order to provide charge balance in an otherwise negatively charged active site. Our data show that unless the active-site charge balance is correctly treated in simulations, it is not possible to generate a physically meaningful model for the enzyme that can accurately reproduce activity and selectivity trends. 
+        \textbf{Abstract}: Potato epoxide hydrolase 1 exhibits rich enantio- and regioselectivity in the hydrolysis of a broad range of substrates. The enzyme can be engineered to increase the yield of optically pure products as a result of changes in both enantio- and regioselectivity. It is thus highly attractive in biocatalysis, particularly for the generation of enantiopure fine chemicals and pharmaceuticals. The present work aims to establish the principles underlying the activity and selectivity of the enzyme through a combined computational, structural, and kinetic study using the substrate \textit{trans}-stilbene oxide as a model system. Extensive empirical valence bond simulations have been performed on the wild-type enzyme together with several experimentally characterized mutants. We are able to computationally reproduce the differences between the activities of different stereoisomers of the substrate and the effects of mutations of several active-site residues. In addition, our results indicate the involvement of a previously neglected residue, H104, which is electrostatically linked to the general base H300. We find that this residue, which is highly conserved in epoxide hydrolases and related hydrolytic enzymes, needs to be in its protonated form in order to provide charge balance in an otherwise negatively charged active site. Our data show that unless the active-site charge balance is correctly treated in simulations, it is not possible to generate a physically meaningful model for the enzyme that can accurately reproduce activity and selectivity trends. 
 
           \textbf{Technique}: Molecular Dynamics; \textbf{Software}: {Gromacs}
 
@@ -612,9 +610,9 @@ orca_pltvib malon_ts.hess 6
 
     \item \href{https://doi.org/10.1021/ja068899t}{\textcolor{blue}{Carbene Stabilization by Aryl Substituents. Is Bigger Better?}}
 
-          H. L. Woodcock, D. Moran, B. R. Brooks, P. v. R. Schleyer, H. F. Schaefer, {\it J. Am. Chem. Soc.} {\bf 2007}, 129, 3763--3770. DOI: 10.1021/ja068899t.
+        H.\ L.\ Woodcock, D.\ Moran, B.\ R.\ Brooks, P.\ v.\ R.\ Schleyer, H.\ F.\ Schaefer, \textit{J.\ Am.\ Chem.\ Soc.} \textbf{2007}, \textit{129,} 3763--3770. DOI: 10.1021/ja068899t.
 
-          \textbf{Abstract}: The geometries and relative stabilities of the singlet and triplet states of phenyl- (\(C_s\)), diphenyl- (\(C_2\)), 1-naphthyl- (\(C_s\)), di(1-naphthyl)- (\(C_2\)), and 9-anthryl-substituted (\(C_s\)) carbenes were investigated at the B3LYP/6-311+G(d,p) + ZPVE level of density functional theory. The singlet--triplet energy separations (\(\Delta E_\mathrm{ST}\)), 2.7, 2.9, 3.4, 3.7, and 5.7 kcal/mol, respectively, after including an empirical correction (2.8 kcal/mol) based on the error in the computed singlet--triplet gap for methylene versus experiment, are in good agreement with available experimental values. Consistent with literature reports, triplet di(9-anthryl)carbene has a linear, \(D_{2d}\) symmetrical, allene structure with \SI{1.336}{\angstrom} C=C bond lengths and considerable biradical character. B3LYP favors such cumulene biradical structures and triplet spin states and predicts a large (>15 kcal/mol) “di(9-anthryl)carbene” singlet--triplet (biradical) energy gap. The resonance stabilization of both singlet and triplet carbenes increases modestly with the size of the arene substituent and overall, (di)arylcarbenes, both singlet and triplet, are better stabilized by bigger substituents. For example, methylene is stabilized more by a naphthyl than a phenyl group (singlets, 26.6 versus 24.4; and triplets, 20.9 versus 18.1 kcal/mol, respectively). The carbene geometries are affected by both steric effects and arene--carbene orbital interactions (\(\sigma\)--p and p--\(\pi\)). For instance, the central angles at the carbene are widened by a second arene group, which leads to increased s-character and shorter carbene bond lengths (i.e., \"{C}--C, \"{C}--H). In general, the aromaticity of the substituted rings in triplet carbenes is most affected by the presence of the unpaired electrons.
+          \textbf{Abstract}: The geometries and relative stabilities of the singlet and triplet states of phenyl- (\(C_\mathrm{s}\)), diphenyl- (\(C_2\)), 1-naphthyl- (\(C_\mathrm{s}\)), di(1-naphthyl)- (\(C_2\)), and 9-anthryl-substituted (\(C_\mathrm{s}\)) carbenes were investigated at the B3LYP/6-311+G(d,p) + ZPVE level of density functional theory. The singlet--triplet energy separations (\(\Delta E_\mathrm{ST}\)), 2.7, 2.9, 3.4, 3.7, and 5.7 kcal/mol, respectively, after including an empirical correction (2.8 kcal/mol) based on the error in the computed singlet--triplet gap for methylene versus experiment, are in good agreement with available experimental values. Consistent with literature reports, triplet di(9-anthryl)carbene has a linear, \(D_\mathrm{2d}\) symmetrical, allene structure with \SI{1.336}{\angstrom} C=C bond lengths and considerable biradical character. B3LYP favors such cumulene biradical structures and triplet spin states and predicts a large (>15 kcal/mol) “di(9-anthryl)carbene” singlet--triplet (biradical) energy gap. The resonance stabilization of both singlet and triplet carbenes increases modestly with the size of the arene substituent and overall, (di)arylcarbenes, both singlet and triplet, are better stabilized by bigger substituents. For example, methylene is stabilized more by a naphthyl than a phenyl group (singlets, 26.6 versus 24.4; and triplets, 20.9 versus 18.1 kcal/mol, respectively). The carbene geometries are affected by both steric effects and arene--carbene orbital interactions (\(\sigma\)--p and p--\(\pi\)). For instance, the central angles at the carbene are widened by a second arene group, which leads to increased s-character and shorter carbene bond lengths (i.e., \"{C}--C, \"{C}--H). In general, the aromaticity of the substituted rings in triplet carbenes is most affected by the presence of the unpaired electrons.
 
           \textbf{Technique}: Density Functional Theory; \textbf{Software}: ORCA
 
