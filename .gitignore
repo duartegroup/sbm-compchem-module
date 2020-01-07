@@ -16,3 +16,6 @@
 
 # vim swap files
 *.swp
+
+# I hate MacOS
+**/.DS_Store
