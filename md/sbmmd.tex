@@ -53,7 +53,7 @@
  listing style=tcbscript,
  beforeafter skip=-0.05cm
 }
-\newtcolorbox{summary}[0]{
+\newtcolorbox{question}[0]{
  center,
  width=0.95\textwidth,
  colback=red!5!white,
@@ -116,10 +116,14 @@ We will use the following one:
 module load gromacs/2018.6__single
 \end{cmdline}
 
-GROMACS is composed of several modules invoked with the command \texttt{gmx\_mpi}. For example, the module \texttt{pdb2gmx} is invoked typing: \texttt{gmx\_mpi pdb2gmx}. To get information about any GROMACS module, you can invoke the following command:
+GROMACS is composed of several modules invoked (in this version) with the command \texttt{gmx\_mpi}. For example, the module \texttt{pdb2gmx} is invoked typing: \texttt{gmx\_mpi pdb2gmx}. To get information about any GROMACS module, you can invoke the following command:
+
 \begin{cmdline}
 gmx_mpi (module) -h
 \end{cmdline}
+
+Other tutorials may use \texttt{gmx} instead of \texttt{gmx\_mpi}. These two are largely equivalent, but depending on how GROMACS was installed on the system one or the other may be appropriate. In our case, we will use \texttt{gmx\_mpi}.
+
 \textbf{Tip of the day}: Organise your input files! We suggest creating a subfolder for each step, placing ``readme'' files in the folders describing what each of them contains.
 
 where \texttt{(module)} is replaced by the actual name of the command you're trying to issue, e.g \texttt{pdb2gmp}, \texttt{grompp}, etc. Information will be printed to the terminal, including available algorithms, options, required file formats, known bugs and limitations, etc. We recommend new users of GROMACS, to invoke the help information for common commands to learn what each of them do. 
@@ -132,7 +136,7 @@ source <(wget -O - https://raw.githubusercontent.com/duartegroup/sbmcc/master/md
 
 From now on, any time you need to run \texttt{gmx\_mpi mdrun -v -deffnm XYZ}, simply replace that command with \texttt{qgmx XYZ}; this will automatically submit the \texttt{mdrun} command to the cluster.
 
-As a ``warm up'', we suggest you complete this tutorial now: \url{http://www.mdtutorials.com/gmx/lysozyme/index.html}. If you are unable to do so, please ask for help, but DO NOT skip steps. Otherwise you will struggle tomorrow.
+As a ``warm up'', we suggest you complete this tutorial now: \url{http://www.mdtutorials.com/gmx/lysozyme/index.html}. If you are unable to do so, please ask for help, but DO NOT skip steps. Otherwise you will struggle tomorrow. Don't forget to replace any instances of \texttt{gmx} with \texttt{gmx\_mpi}.
 
 
 \newpage\textbf{\LARGE Getting Started with Gromacs -- Day 2}
@@ -172,7 +176,7 @@ Here, we will evaluate the quality of the crystal structure. We will also inspec
           (Histidine has a \(\mathrm pK_\mathrm{a}\) of about 7.0 in solution, and it is usually necessary to make a visual inspection of the local environment to decide the protonation state. In addition, neutral histidine can exist in two tautomeric forms (HID and HIE).)
 \end{itemize}
 
-\begin{summary}
+\begin{question}
     \begin{enumerate}[leftmargin=0.6cm]
         \renewcommand{\labelenumi}{Q\arabic{enumi}.}
         \item Write down the following information in your notebook: crystal resolution, missing residues, non-standard ligands, biological unit, temperature and pH at which the structure was obtained.
@@ -180,7 +184,7 @@ Here, we will evaluate the quality of the crystal structure. We will also inspec
         \item Are all water molecules in the active site clearly visible in the density map? Can you determine which one is involved in the second step of the reaction?
         \item Obtain the \(\mathrm pK_\mathrm{a}\) and determine the protonation states of ionisable residues. 
     \end{enumerate}
-\end{summary}
+\end{question}
 
 Here we have helped you with Q4:
 
@@ -236,14 +240,14 @@ The Amber99sb force field and the tip3p water model are used.
 
 which indicates that the total charge of the system is \(-5\).
 
-\begin{summary} 
+\begin{question} 
     \begin{enumerate}[leftmargin=0.6cm]
         \renewcommand{\labelenumi}{Q\arabic{enumi}.}
         \setcounter{enumi}{4}
         \item Read the help text of \texttt{pdb2gmx -h} and try to find out what the different files it created do, and what options are available for \texttt{pdb2gmx}. 
         \item Open the \texttt{topol.top} file using any available text editor and check what is the information inside it. Take note of the total number of solvent molecules. 
     \end{enumerate}
-\end{summary}
+\end{question}
 
 
 \section{Adding solvent water around the protein}
@@ -257,13 +261,13 @@ gmx_mpi genbox -cp eh_box.gro -cs spc216.gro -o eh_solv.gro -p topol.top
 
 \vspace{-0.3cm}
 
-\begin{summary} 
+\begin{question} 
     \begin{enumerate}[leftmargin=0.6cm]
         \renewcommand{\labelenumi}{Q\arabic{enumi}.}
         \setcounter{enumi}{6}
         \item Note that the \texttt{topol.top} file was changed and now contains the water molecules. How many solvent molecules were added? Before you continue it is a good idea to look at this system in VMD. 
     \end{enumerate}
-\end{summary}
+\end{question}
 
 
 \section{Neutralise your system}
@@ -375,26 +379,26 @@ gmx_mpi energy -f pr1.edr
 
 Type ``15 0'' at the prompt to select the temperature of the system and exit. The resulting plot can be seen using \texttt{xmgrace}
 
-\begin{summary}
+\begin{question}
     \begin{enumerate}[leftmargin=0.6cm]
         \renewcommand{\labelenumi}{Q\arabic{enumi}.}
         \setcounter{enumi}{7}
         \item Has the energy and temperature converged? How could you confirm that your thermostat is correctly implemented?
     \end{enumerate}
-\end{summary}
+\end{question}
 
 
 \section{Equilibration of the water molecules at constant pressure}
 
 The previous step, NVT equilibration, stabilised the temperature of the system. Prior to data collection, we must also stabilise the pressure (and thus also the density) of the system. Equilibration of pressure is conducted under an NPT ensemble, wherein the Number of particles, Pressure, and Temperature are all constant. The ensemble is also called the ``isothermal-isobaric'' ensemble, and most closely resembles experimental conditions.
 
-\begin{summary}
+\begin{question}
     \begin{enumerate}[leftmargin=0.6cm]
         \renewcommand{\labelenumi}{Q\arabic{enumi}.}
         \setcounter{enumi}{8}
         \item The \texttt{.mdp} file used for a 100~ps NPT equilibration is similar to the previous one. Identify the differences; why has \texttt{gen\_vel} changed from yes to no?
     \end{enumerate}
-\end{summary}
+\end{question}
 
 Use the same script as before, only changing pr1 to pr2:
 
@@ -447,14 +451,14 @@ gmx_mpi make_ndx -f md.gro -n index.ndx -o index.ndx
 
 and select the pair of atoms you want to follow. We suggest to monitor hydrogen bonds for the following residues: H104, E35, D105, and H300. 
 
-\begin{summary}
+\begin{question}
     \begin{enumerate}[leftmargin=0.8cm]
         \renewcommand{\labelenumi}{Q\arabic{enumi}.}
         \setcounter{enumi}{9}
         \item What are the most flexible parts of the protein?
         \item How could you determine if the protein is stable during the simulation time?
     \end{enumerate}
-\end{summary}
+\end{question}
 
 \printbibliography
 
