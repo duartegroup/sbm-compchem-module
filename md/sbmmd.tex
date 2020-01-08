@@ -22,6 +22,7 @@
 \usepackage{cmap}
 \usepackage[scaled=0.8]{beramono} % This is nice because the tilde isn't at the top of the line.
 \usepackage[T1]{fontenc}
+\usepackage[dvipsnames]{xcolor}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
@@ -84,9 +85,20 @@
 \cfoot{\thepage}
 \begin{document}
 
-\textbf{\LARGE Getting Started with Gromacs -- Day 1}
+\textbf{\LARGE Getting Started with GROMACS -- Day 1}
 
-\section{Background}
+\vspace{0.5cm}
+
+\begin{tcolorbox}[colframe=Green!70!white, colback=Green!10!white, width=0.95\textwidth, center]
+    The most updated version of this handout can always be found at:
+    \vspace{0.2cm}
+    \begin{center}
+        \color{blue}{\url{https://github.com/duartegroup/sbmcc/blob/master/md/sbmmd.pdf}}
+    \end{center}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
 For this tutorial we will use the molecular dynamics (MD) package GROMACS (GROningen MAchine for Chemical Simulations). The program was originally developed in the Biophysical Chemistry Department at University of Groningen, and is now maintained by contributors in universities and research centres worldwide. GROMACS is free, open-source (released under the GNU Lesser General Public License (LGPL)), and works natively on a Unix-type system, so if you have any of these operating systems, you can also install it in your computer. Similar to ORCA, GROMACS can only be called using the terminal: there is no graphical interface.
 
 During this tutorial, we will also use the following software:
@@ -98,7 +110,7 @@ During this tutorial, we will also use the following software:
 
 The purpose of this tutorial is to give you a ``feeling'' for the typical steps used in practical simulations. Since the time available for this exercise is rather limited, we can only perform very short sample simulations. We will first prepare the crystal structure of a biomolecule and then take a look to the input files necessary for the simulation. Then, we will solvate the structure in water, minimise and equilibrate it, and finally perform a short production simulation. After this, we will run some simple analysis using the tools that are already part of GROMACS.
 
-\textbf{Useful Sources}
+\textbf{Useful resources:}
 \begin{itemize}
 	 \item \url{http://www.mdtutorials.com/gmx/}
 	\item\ J.\ A.\ Lemkul ``From Proteins to Perturbed Hamiltonians: A Suite of Tutorials for the GROMACS-2018 Molecular Simulation Package'', \url{https://doi.org/10.33011/livecoms.1.1.5068}
@@ -122,11 +134,7 @@ GROMACS is composed of several modules invoked (in this version) with the comman
 gmx_mpi (module) -h
 \end{cmdline}
 
-Other tutorials may use \texttt{gmx} instead of \texttt{gmx\_mpi}. These two are largely equivalent, but depending on how GROMACS was installed on the system one or the other may be appropriate. In our case, we will use \texttt{gmx\_mpi}.
-
-\textbf{Tip of the day}: Organise your input files! We suggest creating a subfolder for each step, placing ``readme'' files in the folders describing what each of them contains.
-
-where \texttt{(module)} is replaced by the actual name of the command you're trying to issue, e.g \texttt{pdb2gmp}, \texttt{grompp}, etc. Information will be printed to the terminal, including available algorithms, options, required file formats, known bugs and limitations, etc. We recommend new users of GROMACS, to invoke the help information for common commands to learn what each of them do. 
+where \texttt{(module)} is replaced by the actual name of the command you're trying to issue, e.g \texttt{pdb2gmp}, \texttt{grompp}, etc. Information will be printed to the terminal, including available algorithms, options, required file formats, known bugs and limitations, etc. We recommend new users of GROMACS, to invoke the help information for common commands to learn what each of them do. Incidentally, other tutorials may use \texttt{gmx} instead of \texttt{gmx\_mpi}. These two are largely equivalent, but depending on how GROMACS was installed on the system one or the other may be appropriate. In our case, we will use \texttt{gmx\_mpi}.
 
 Most of the GROMACS jobs can be run directly without a submission script, but for production MD runs it is a good idea to submit the job to the cluster. In order to do this, install a short script using:
 
@@ -136,10 +144,10 @@ source <(wget -O - https://raw.githubusercontent.com/duartegroup/sbmcc/master/md
 
 From now on, any time you need to run \texttt{gmx\_mpi mdrun -v -deffnm XYZ}, simply replace that command with \texttt{qgmx XYZ}; this will automatically submit the \texttt{mdrun} command to the cluster.
 
-As a ``warm up'', we suggest you complete this tutorial now: \url{http://www.mdtutorials.com/gmx/lysozyme/index.html}. If you are unable to do so, please ask for help, but DO NOT skip steps. Otherwise you will struggle tomorrow. Don't forget to replace any instances of \texttt{gmx} with \texttt{gmx\_mpi}.
+As a ``warm up'', we suggest you complete this tutorial now: \url{http://www.mdtutorials.com/gmx/lysozyme/index.html}. If you are unable to do so, please ask for help, but DO NOT skip steps. Otherwise you will struggle tomorrow. Don't forget to replace any instances of \texttt{gmx} with \texttt{gmx\_mpi}. In this tutorial and beyond, \textbf{make sure to organise your input files!} We suggest creating a subfolder for each step, placing ``readme'' files in the folders describing what each of them contains.
 
 
-\newpage\textbf{\LARGE Getting Started with Gromacs -- Day 2}
+\newpage\textbf{\LARGE Getting Started with GROMACS -- Day 2}
 
 \section{Epoxide hydrolase}
 In this tutorial we will work with the potato epoxide hydrolase enzyme (StEH1). Epoxide hydrolases (EHs) are enzymes catalysing the hydrolysis of epoxides to yield the corresponding vicinal diol.\autocite{Elfstrom2005} The functions of EHs are diverse, including detoxification through the breakdown of toxic epoxides, catabolism, and cellular signalling. 
@@ -160,7 +168,7 @@ Most EHs belong to the versatile family of $\alpha/\beta$-hydrolase fold enzymes
 
 Here, we will evaluate the quality of the crystal structure. We will also inspect the protein for missing atoms or residues, remove unwanted molecules from our system, and determine the protonation states of ionisable residues (note: in a classical MD simulation, the protonation states are fixed). If our setup had included the substrate, we would also need to parametrise and dock this molecule into the active site. However, for the sake of simplicity, in this tutorial, we will only work with the apo form of the enzyme. 
 
-\section{Structure preparation}
+\section{Protein structure preparation}
 
 \begin{itemize}
     \item Go to the RCSB website (www.pdb.org) and download the PDB file for the crystal structure (PDB entry 2CJP).\autocite{Mowbray2006} Open the PDB file in a text editor (TextEdit, Notepad). 
@@ -205,7 +213,7 @@ Here we have helped you with Q4:
 \end{center}
 
 
-\section{Prepare the topology}
+\section{Topology preparation}
 
 In order to simulate this complex system we will use a simplified representation, where atoms and bonds will be represented by spheres and springs, respectively, and interactions between the atoms will be described using classical mechanics. Therefore the first step will be to decide what set of parameters and form of the mathematical functions we will use to describe the system (the function plus the set of parameters is called a \textit{force field}). This information will be contained in the topology file. 
 
@@ -250,9 +258,9 @@ which indicates that the total charge of the system is \(-5\).
 \end{question}
 
 
-\section{Adding solvent water around the protein}
+\section{Solvation of the protein}
 
-Now we will place the enzyme on a box of water molecules. But before adding solvent we have to determine the size and shape of the simulation box should be. Here we will use a cubic box that will extend 1~nm outwards from the molecule.
+Now we will place the enzyme on a box of water molecules. But before adding solvent, we have to determine what the size and shape of the simulation box should be. Here we will use a cubic box that will extend 1~nm outwards from the molecule.
 
 \begin{cmdline}
 gmx_mpi editconf -f eh.gro -o eh_box.gro -c -d 1.0 -bt cubic
@@ -270,7 +278,7 @@ gmx_mpi genbox -cp eh_box.gro -cs spc216.gro -o eh_solv.gro -p topol.top
 \end{question}
 
 
-\section{Neutralise your system}
+\section{Charge neutralisation of the system}
 
 We now must set the total charge of our system to zero and set the ionic concentration to a value similar to the physiologic ionic concentration. For that we will replace water molecules with \ce{Na+} and \ce{Cl-} ions. We will use the \texttt{genion} tool for that. 
 
@@ -286,7 +294,9 @@ gmx_mpi genion -s ions.tpr -o eh_neutral.gro -p topol.top -neutral -conc 0.154
 
 When prompted, choose group 13 ``SOL'' for embedding ions. You do not want to replace parts of your protein with ions.
 
+
 \section{Energy minimisation}
+
 Before we can begin dynamics, we must ensure that the system has no steric clashes or inappropriate geometry that could lead to large forces and structure distortion. To remove this forces the structure is relaxed through a process called energy minimisation. The aim is not to reach any local energy minimum, but only remove clashes so e.g. 1000 steps of steepest descent algorithm works well for minimisation. The settings for this calculation are defined in a parameter file called \texttt{min.mdp}:
  
 With these parameters we are requesting the steepest descent algorithm for energy minimisation with a total of 2000 steps. For the calculation of electrostatics interactions we use the Particle-Mesh Ewald (PME) method and for the van der Waals a cut-off method, with a cutoff of 10~\r{A}.
@@ -312,7 +322,7 @@ Choose option 12. Then plot the file \texttt{potential.xvg} with \texttt{xmgrace
 xmgrace potential.xvg
 \end{cmdline}
 
-\section{Equilibration of waters around the protein at constant volume}
+\section{Equilibration of water molecules around the protein at constant volume}
 
 Now we have a reasonable starting structure. However, in order to perform dynamics on the system we need to equilibrate the solvent and ions around the protein. This relaxation should take around 1~ns; however, due to time constraints we will only use 100~ps (50000 steps). After we arrive at the correct temperature (based on kinetic energies), we will apply pressure to the system until it reaches the proper density. The settings used are:
 
@@ -388,7 +398,7 @@ Type ``15 0'' at the prompt to select the temperature of the system and exit. Th
 \end{question}
 
 
-\section{Equilibration of the water molecules at constant pressure}
+\section{Equilibration of water molecules at constant pressure}
 
 The previous step, NVT equilibration, stabilised the temperature of the system. Prior to data collection, we must also stabilise the pressure (and thus also the density) of the system. Equilibration of pressure is conducted under an NPT ensemble, wherein the Number of particles, Pressure, and Temperature are all constant. The ensemble is also called the ``isothermal-isobaric'' ensemble, and most closely resembles experimental conditions.
 

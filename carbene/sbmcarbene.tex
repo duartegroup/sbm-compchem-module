@@ -22,6 +22,7 @@
 \usepackage{cmap}
 \usepackage[scaled=0.8]{beramono} % This is nice because the tilde isn't at the top of the line.
 \usepackage[T1]{fontenc}
+\usepackage[dvipsnames]{xcolor}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
@@ -79,7 +80,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \rhead{SBM CDT 2020}
-\lhead{Practical Computational Chemistry Module: Carbene Structure}
+\lhead{Practical Computational Chemistry Module: Arylcarbenes}
 \cfoot{\thepage}
 \begin{document}
 
@@ -89,11 +90,15 @@
 
 \vspace{0.5cm}
 
-You can access a softcopy of this handout at:
+\begin{tcolorbox}[colframe=Green!70!white, colback=Green!10!white, width=0.95\textwidth, center]
+    The most updated version of this handout can always be found at:
+    \vspace{0.2cm}
+    \begin{center}
+        \color{blue}{\url{https://github.com/duartegroup/sbmcc/blob/master/carbene/sbmcarbene.pdf}}
+    \end{center}
+\end{tcolorbox}
 
-\begin{center}
-    \color{blue}{\url{https://github.com/duartegroup/sbmcc/blob/master/carbene/sbmcarbene.pdf}}
-\end{center}
+\vspace{0.2cm}
 
 Many of the calculations described in the paper\autocite{Woodcock2007} have already been covered in the Day 1 tutorial, so here we will only cover ``new'' procedures which may be of interest. Much of this information can be found in the ORCA manual and is documented in much greater detail there.
 
@@ -184,10 +189,10 @@ python nics1.py
 
 At the prompt, paste in the coordinates of the six carbons that form the benzene ring (that should be six lines' worth of \texttt{C   NUMBER   NUMBER   NUMBER}). The script will output a new line starting with \texttt{DA}, which you should then copy and paste back into the geometry in your input file.
 
-Last comes the \texttt{\%eprnmr} block. \texttt{GIAO} stands for \textit{gauge-independent atomic orbitals} (or \textit{including} or \textit{invariant}; chemists can't seem to make up their minds). This is the most widely-used method for calculating NMR chemical shifts (more information on this can be found in the recommended books). The line \texttt{Nuclei = DA\_NUMBER \{ shift \};} specifies that we only want the chemical shift of the dummy atom (you \textit{can} calculate other chemical shifts if you want, but it will take a long time). Replace \texttt{DA\_NUMBER} with the appropriate atom number corresponding to the dummy atom, but \textbf{read the warning on the next page first!}
+Last comes the \texttt{\%eprnmr} block. \texttt{GIAO} stands for \textit{gauge-independent atomic orbitals} (or \textit{including} or \textit{invariant}; chemists can't seem to make up their minds). This is the most widely-used method for calculating NMR chemical shifts (more information on this can be found in the recommended books). The line \texttt{Nuclei = DA\_NUMBER \{ shift \};} specifies that we only want the chemical shift of the dummy atom (you \textit{can} calculate other chemical shifts if you want, but it will take a long time). Replace \texttt{DA\_NUMBER} with the appropriate atom number corresponding to the dummy atom.
 
 \begin{warning}
-Within the \texttt{\%eprnmr} block, atom labels are counted \textbf{beginning from 1, not 0}.
+Within the \texttt{\%eprnmr} block, atom labels are counted \textbf{beginning from 1, not 0}. So if your dummy atom is the fifth atom to be listed, you should replace \texttt{DA\_NUMBER} with 5, not 4.
 \end{warning}
 
 Confusingly, in the \textit{output}, the atom numbering returns to ``normal'' and is counted from 0 again. When the calculation finishes, there will be a section at the bottom of the output file containing a \texttt{CHEMICAL SHIELDING SUMMARY}. Just above that is the \texttt{Total shielding tensor}, which is the quantity of interest here. The NICS value corresponds to one of the three \textit{principal values} of this tensor, with signs reversed. Helpfully, ORCA will calculate these three values, and they are the first three numbers in the \texttt{Total} line under \texttt{Diagonalised sT*s matrix}. But unhelpfully, ORCA doesn't tell you \textit{which} of the three principal values is the one we are actually interested in.
