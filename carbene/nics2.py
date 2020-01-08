@@ -12,10 +12,12 @@ else:
 
     print("\nInput total shielding tensor: \n")
     stens = []
-    for i in range(3):
+    line = "test"
+    while len(stens) < 3:
         line = input()
-        sval = [float(i.strip()) for i in line.split()]
-        stens.append(sval)
+        if line:
+            sval = [float(i.strip()) for i in line.split()]
+            stens.append(sval)
 
     # s: Shielding tensor
     s = np.array(stens)
@@ -35,7 +37,7 @@ else:
     line = input()
     c = [float(i.strip()) for i in line.split()[1:]]
     c3 = np.array(c)
-    
+
     # Calculate unit vector normal to the plane.
     n = np.cross(c1 - c2, c1 - c3)
     n = n/np.linalg.norm(n)
