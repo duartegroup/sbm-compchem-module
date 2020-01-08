@@ -434,10 +434,10 @@ gmx_mpi grompp -f md.mdp -c pr2.gro -p topol.top -o md.tpr
 and run it with:
 
 \begin{cmdline}
-qgmx md.tpr
+qgmx md
 \end{cmdline}
 
-Remember that such a simulation time is too short to obtain any meaningful result. In practice, one would also need to run many replicas, i.e.\ calculations with the same structures and different initial random velocities. Ideally, with current computer power, you can run 100~ns per day and multiple trajectories (so your total simulation time is larger!). Sometimes you can have simulations that are stable during 400~ns, and then the main changes take place after 500~ns. It all depends on what the relevant timescale for the behaviour at hand is.
+(recall that ``normally'' this would be \texttt{gmx\_mpi mdrun -deffnm md}, but to submit it to the cluster we replace that with \texttt{qgmx md}). Bear in mind that such a simulation time is too short to obtain any meaningful results. In practice, one would also need to run many replicas, i.e.\ calculations with the same structures and different initial random velocities. Ideally, with current computer power, you can run 100~ns per day and multiple trajectories (so your total simulation time is larger!). Sometimes you can have simulations that are stable during 400~ns, and then the main changes take place after 500~ns. It all depends on what the relevant timescale for the behaviour at hand is.
 
 \section{Analysis}
 We will now analyse the trajectory. Let's start by calculating the root-mean-square deviation of the backbone atoms:
