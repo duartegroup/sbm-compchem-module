@@ -22,6 +22,7 @@
 \usepackage{cmap}
 \usepackage[scaled=0.8]{beramono} % This is nice because the tilde isn't at the top of the line.
 \usepackage[T1]{fontenc}
+\usepackage[dvipsnames]{xcolor}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
@@ -83,13 +84,23 @@
 \cfoot{\thepage}
 \begin{document}
 
-% Jonathan Yong, 1 Jan 2020
+% Jonathan Yong, 8 Jan 2020
 
 \textbf{\LARGE NMR calculations in ORCA}
 
 \vspace{0.5cm}
 
-We will look at the three candidate structures for cordycepol A, proposed by Reddy and Kutateladze in 2016.\autocite{Reddy2016} You should calculate chemical shifts, and key coupling constants, for all three candidates. From these, you can determine which is most likely to be the correct structure by comparison against the experimental shifts.
+\begin{tcolorbox}[colframe=Green!70!white, colback=Green!10!white, width=0.95\textwidth, center]
+    The most updated version of this handout can always be found at:
+    \vspace{0.2cm}
+    \begin{center}
+        \color{blue}{\url{https://github.com/duartegroup/sbmcc/blob/master/nmr/sbmnmr.pdf}}
+    \end{center}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+In this project, we will look at the three candidate structures for cordycepol A, proposed by Reddy and Kutateladze in 2016.\autocite{Reddy2016} You should calculate chemical shifts, and key coupling constants, for all three candidates. From these, you can determine which is most likely to be the correct structure by comparison against the experimental shifts.
 
 \begin{warning}
 We \textbf{strongly} recommend that you create a separate directory for each of the following sections, or it can get very messy!

@@ -23,6 +23,7 @@
 \usepackage{cmap}
 \usepackage[scaled=0.8]{beramono} % This is nice because the tilde isn't at the top of the line.
 \usepackage[T1]{fontenc}
+\usepackage[dvipsnames]{xcolor}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings}
@@ -97,6 +98,13 @@
 
 \vspace{0.2cm}
 
+\begin{tcolorbox}[colframe=Green!70!white, colback=Green!10!white]
+    The most updated version of this handout can always be found at:
+    \begin{center}
+        \color{blue}{\url{https://github.com/duartegroup/sbmcc/blob/master/sbmcc.pdf}}
+    \end{center}
+\end{tcolorbox}
+
 Welcome! In this set of exercises you will gain some hands-on experience in connecting to a remote cluster, creating input files for the computational chemistry programme ORCA, and submitting the calculations to the cluster's job management system. \marginpar{\small We will not discuss the theory behind the calculations: if you are interested, a few suggestions for books can be found in the \textit{Other resources} section at the end of this handout.}
 
 Before starting, please install \textbf{MobaXterm} (from the Software Centre), \textbf{Avogadro} (version 1.2.0 from \url{https://avogadro.cc/}; the version in the Software Centre, 1.1.1, is not sufficent). You will need both these programmes to complete the following exercises. We also recommend installing a plain text editor such as \textbf{Notepad++} (\url{https://notepad-plus-plus.org/}).
@@ -114,9 +122,9 @@ Click \textbf{Session} (not ``Session\textbf{s}''!) at the top-left corner, then
     \includegraphics[scale=0.5]{./img/ssh}
     \caption{The SSH dialog in MobaXterm.}
     \label{fig:ssh}
-\end{figure}\marginpar{\small When entering passwords into terminals, there is no visual feedback, so don't be alarmed.}
+\end{figure}
 
-Click \textbf{OK}. Enter your password when prompted, then press Enter. You should be greeted with a terminal window on the right, and a graphical interface allowing you to browse files on the left (\figref{loggedin}):
+Click \textbf{OK}. Enter your password when prompted, then press Enter. You should be greeted with a terminal window on the right, and a graphical interface allowing you to browse files on the left (\figref{loggedin}):\marginpar{\small When entering passwords into terminals, there is no visual feedback, so don't be alarmed.}
 
 \begin{figure}[H]
     \centering
@@ -147,7 +155,7 @@ The prompt contains some important information: your username, the hostname (the
 ls
 \end{cmdline}
 
-can be used to list the contents of the directory you are in. If you try that right now, you will probably get no output, because your home directory should be empty. We can populate it with a new (empty) folder by using:\marginpar{\small Notice how we use an underscore instead of a space in our file name. Spaces in file names are not prohi\-bited, but can potentially cause annoying problems which need to be carefully circumvented, so it is easier to avoid them altogether.}
+can be used to list the contents of the directory you are in. If you try that right now, you will probably get no output, because your home directory should be empty. We can populate it with a new (empty) folder by using:
 
 \begin{cmdline}
 mkdir cats
@@ -158,6 +166,7 @@ and a new file with:
 \begin{cmdline}
 touch maine_coon.txt
 \end{cmdline}
+\marginpar{\small Notice how we use an underscore instead of a space in our file name. Spaces in file names are not prohi\-bited, but can potentially cause annoying problems which need to be carefully circumvented, so it is easier to avoid them altogether.}
 
 Now running \texttt{ls} should tell us that there are two things in the current directory, namely \texttt{cats} and \texttt{maine\_coon.txt} (try it!). This is not immediately reflected in the graphical browser; you will need to click on the \textit{Refresh} button (\figref{refresh}) to see them:
 
