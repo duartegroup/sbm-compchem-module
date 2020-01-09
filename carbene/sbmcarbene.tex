@@ -1,0 +1,212 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,
+            tmargin=3cm,
+            bmargin=3cm,
+            lmargin=2cm,
+            rmargin=2cm]{geometry}
+
+% Don't necessarily need all of these, I just copied from my standard LaTeX config
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage[hidelinks]{hyperref}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{booktabs}
+\hbadness 10000 % suppresses underfull hbox errors which are common with marginpar
+\usepackage{float}
+\usepackage[labelfont=it]{caption}
+\captionsetup{belowskip=-0.4cm}
+\newcommand{\figref}[1]{\textit{Figure \ref{fig:#1}}}
+\usepackage{enumitem}
+\usepackage{cmap}
+\usepackage[scaled=0.8]{beramono} % This is nice because the tilde isn't at the top of the line.
+\usepackage[T1]{fontenc}
+\usepackage[dvipsnames]{xcolor}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\lstdefinestyle{tcbscript}{language={},
+     belowskip=2pt, aboveskip=2pt,
+     columns=fullflexible, keepspaces=true,
+     breaklines=true, breakatwhitespace=true,
+     basicstyle=\ttfamily\small, extendedchars=true, nolol
+     }
+\newtcblisting{script}[1]{
+    title=#1,
+    fontupper=\ttfamily,
+    fonttitle=\bfseries,
+    colframe=blue!60!gray,
+    colback=blue!5,
+    width=0.95\textwidth,
+    center,
+    listing only,
+    listing style=tcbscript,
+    beforeafter skip=0.45cm
+}
+\newtcblisting{cmdline}{
+    fontupper=\ttfamily,
+    colframe=white, opacityframe=0, % transparent
+    colback=white, opacityback=0, % transparent
+    width=0.95\textwidth,
+    center,
+    listing only,
+    listing style=tcbscript,
+    beforeafter skip=-0.05cm
+}
+\newtcolorbox{warning}[0]{
+    center,
+    width=0.95\textwidth,
+    colback=red!5!white,
+    colframe=red!75!black,
+    fonttitle=\bfseries,
+    title=Warning,
+    beforeafter skip=0.45cm
+}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{chemmacros}
+\usepackage{siunitx}
+\usepackage{upgreek}
+
+% Bibliography
+\usepackage[style=chem-acs,biblabel=dot,subentry]{biblatex}
+\addbibresource{sbmcarbene.bib}
+
+\usepackage{fancyhdr}
+ 
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{SBM CDT 2020}
+\lhead{Practical Computational Chemistry Module: Arylcarbenes}
+\cfoot{\thepage}
+\begin{document}
+
+% Jonathan Yong, 8 Jan 2020
+
+\textbf{\LARGE Carbene Stabilization by Aryl Substituents}
+
+\vspace{0.5cm}
+
+\begin{tcolorbox}[colframe=Green!70!white, colback=Green!10!white, width=0.95\textwidth, center]
+    The most updated version of this handout can always be found at:
+    \vspace{0.2cm}
+    \begin{center}
+        \color{blue}{\url{https://github.com/duartegroup/sbmcc/blob/master/carbene/sbmcarbene.pdf}}
+    \end{center}
+\end{tcolorbox}
+
+\vspace{0.2cm}
+
+Many of the calculations described in the paper\autocite{Woodcock2007} have already been covered in the Day 1 tutorial, so here we will only cover ``new'' procedures which may be of interest. Much of this information can be found in the ORCA manual and is documented in much greater detail there.
+
+\section{Dispersion interactions}
+
+Dispersion interactions\autocite{Grimme2011} can (and should) be accounted for by adding the keyword \texttt{D3} to your input file (after the functional and basis set). This keyword is only available for certain functionals: see \url{https://www.chemie.uni-bonn.de/pctc/mulliken-center/software/dft-d3/functionalsbj} for a full list of the functionals for which it can be used with. As long as a functional is listed there, it will work with the \texttt{D3} keyword in ORCA: it doesn't matter whether the ``statistical data'' is available or not. The time taken for the calculation with or without dispersion is virtually the same, but more physically accurate results are obtained.
+
+\section{Visualising orbitals}
+
+Virtually every calculation that ORCA carries out involves the calculation of some sort of molecular orbitals. In order to visualise them, you will first need to download a free trial of ChemCraft (which lasts for 150 days): \url{https://chemcraftprog.com}. (Avogadro is extremely buggy in this respect and often crashes when trying to visualise orbitals.) In addition, in the input file you will need to add the two extra keywords:
+
+\begin{cmdline}
+PrintBasis PrintMOs
+\end{cmdline}
+
+to the first line of your input file. If you have already performed a long optimisation and do not want to re-run it with the new keywords, you can simply run a single-point calculation using the optimised geometry (remember to also use the same level of theory).
+
+Open the \texttt{.out} file using ChemCraft (you cannot drag the file into the programme, so you have to use \textbf{File > Open}). At this point you can change the colour scheme (if desired...) with \textbf{Display > CPK coloring 1 (dark background)}, or any of the other alternatives. To visualise the orbitals, go to \textbf{Tools > Orbitals > Render molecular orbitals}.
+
+ChemCraft will give you a list of the MOs calculated, labelled by their occupancy (i.e.\ how many electrons are in them) and energies (in hartrees). Select all the orbitals of interest, increase \textit{Map points per angstrom} to around 12, and click \textbf{Ok}. Typically, we are only interested in the orbitals near the HOMO and LUMO: very low-energy occupied orbitals are usually just core orbitals such as carbon 1s.
+
+Once ChemCraft finishes its calculations, select any of the MOs from the left-hand pane that appears. Turn the \textit{contour value} up to around 0.10, then click on both \textbf{Show isosurface} and \textbf{Both-signed}.
+
+
+\section{NBO calculations}
+
+The canonical MOs, which are routinely calculated by ORCA, are typically delocalised over many atoms in the molecule and do not bear much resemblance to $\sigma$ or $\pi$ MOs of individual functional groups. These can be decomposed (more accurately, transformed) into \textit{natural bond orbitals} (NBOs),\autocite{Weinhold2016} which attempt to localise the MOs in a way which allows one-to-one correspondence with localised $\sigma$ or $\pi$ bonds.
+
+In order to perform this localisation, a separate NBO programme is required. Unfortunately this is not installed on the \texttt{arcus-b} cluster (and is not free to download), so if you want to run these calculations, please consult a demonstrator. Nevertheless, the steps will be briefly documented here.
+
+Firstly, the environment variable \texttt{NBOEXE} has to be set to the full path of the NBO programme. This is best done inside \texttt{qorca} by adding the line
+
+\begin{cmdline}
+print('export NBOEXE=/path/to/nbo.exe', file=bash_script)
+\end{cmdline}
+
+at the appropriate location. This ensures that ORCA knows where the NBO programme resides in, so that ORCA can call it to perform its tasks. Requesting an NBO analysis then simply consists of adding the \texttt{NBO} keyword to the input file. Near the bottom of the input file, the NBO programme will print its output. This includes a description of the localised MOs found (whether they are core MOs, MOs localised to a bond, multiple-centre MOs, or lone pairs), as well as the ``amount'' of atomic orbitals that go into each MO. Therefore, if a lone pair has 33\% carbon 2s character and 67\% carbon 2p character, this means that it is a sp\textsuperscript{2}-hybridised lone pair. Likewise, one can identify the hybrid orbitals that form individual bonds.
+
+
+\section{NICS calculations}
+
+The \textit{nucleus-independent chemical shift} method is one way of assessing the aromaticity of a ring.\autocite{Chen2005} In order to calculate this parameter, we need to add a dummy atom in the middle of the ring of interest. Dummy atoms can be added to the coordinate block in an ORCA input file using the label \texttt{DA}. The overall input file will look like this:
+
+\begin{script}{sample\_nics.inp}
+! FUNC BASIS AUXBASIS
+
+%pal nprocs 16 end
+
+*xyz 0 1
+ ... (original coordinates go here) ...
+ DA    X_DA    Y_DA    Z_DA
+*
+
+%eprnmr
+  Ori GIAO
+  Nuclei = DA_NUMBER { shift };
+end
+\end{script}
+
+There are a few new things in this input file. We will go through them in sequence. You should be comfortable with \texttt{FUNC} and \texttt{BASIS}, but \texttt{AUXBASIS} is probably new to you. This refers to an auxiliary basis set, which is used by ORCA when approximating certain integrals in the NMR calculation. For now, it suffices to follow this table when choosing \texttt{AUXBASIS}:
+
+\begin{center}
+    \begin{tabular}{cc}
+        \toprule
+        \texttt{BASIS} & Appropriate \texttt{AUXBASIS} \\ \midrule
+        \texttt{def2} family & \texttt{def2/JK} \\
+        \texttt{cc-pVnZ} family & \texttt{cc-pVnZ/JK} \\
+        Anything else & \texttt{AutoAux} \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+The line beginning with \texttt{DA} simply specifies the dummy atom as well as its Cartesian coordinates, just like how every other atom is specified. The coordinates of the dummy atom are simply the mean of the coordinates of every heavy atom in the ring:
+
+\[ x_{\ce{DA}} = \frac{1}{6}(x_{\ce{C}1} + x_{\ce{C}2} + \cdots + x_{\ce{C}6}) \]
+
+To automate this calculation, first download some helper scripts using:
+
+\begin{cmdline}
+source <(wget -O - https://raw.githubusercontent.com/duartegroup/sbmcc/master/carbene/nicsdl.sh)
+\end{cmdline}
+
+This will download two Python scripts to your home directory. \texttt{cd} to there and run
+
+\begin{cmdline}
+python nics1.py
+\end{cmdline}
+
+At the prompt, paste in the coordinates of the six carbons that form the benzene ring (that should be six lines' worth of \texttt{C   NUMBER   NUMBER   NUMBER}). The script will output a new line starting with \texttt{DA}, which you should then copy and paste back into the geometry in your input file.
+
+Last comes the \texttt{\%eprnmr} block. \texttt{GIAO} stands for \textit{gauge-independent atomic orbitals} (or \textit{including} or \textit{invariant}; chemists can't seem to make up their minds). This is the most widely-used method for calculating NMR chemical shifts (more information on this can be found in the recommended books). The line \texttt{Nuclei = DA\_NUMBER \{ shift \};} specifies that we only want the chemical shift of the dummy atom (you \textit{can} calculate other chemical shifts if you want, but it will take a long time). Replace \texttt{DA\_NUMBER} with the appropriate atom number corresponding to the dummy atom.
+
+\begin{warning}
+Within the \texttt{\%eprnmr} block, atom labels are counted \textbf{beginning from 1, not 0}. So if your dummy atom is the fifth atom to be listed, you should replace \texttt{DA\_NUMBER} with 5, not 4.
+\end{warning}
+
+Confusingly, in the \textit{output}, the atom numbering returns to ``normal'' and is counted from 0 again. When the calculation finishes, there will be a section at the bottom of the output file containing a \texttt{CHEMICAL SHIELDING SUMMARY}. Just above that is the \texttt{Total shielding tensor}, which is the quantity of interest here. The NICS value corresponds to one of the three \textit{principal values} of this tensor, with signs reversed. Helpfully, ORCA will calculate these three values, and they are the first three numbers in the \texttt{Total} line under \texttt{Diagonalised sT*s matrix}. But unhelpfully, ORCA doesn't tell you \textit{which} of the three principal values is the one we are actually interested in.
+
+So, we have to do that calculation ourselves. This involves finding the \textit{principal axes} of the shielding tensor, and identifying which of these three axes is perpendicular to the benzene ring. There is also a helper script for that, which can be called from your home directory with
+
+\begin{cmdline}
+python nics2.py
+\end{cmdline}
+
+At the first prompt, paste in the three lines under \texttt{Total shielding tensor}; and at the second prompt, paste in the coordinates of \textit{any} three atoms from the ring of interest. The script will then calculate which principal value is the correct one to use: make sure that the number it gives you at the end is the same as one of the principal values ORCA calculated (except with reversed sign). This number is the NICS(0)\textsubscript{zz} number: a large negative value indicates aromaticity, whereas a large positive value indicates antiaromaticity.
+
+For the mathematically inclined, the principal axes are the eigenvectors of \(\mathbf{s}^\intercal \mathbf{s}\) (\(\mathbf{s}\) being the shielding tensor). Given a matrix \(\mathbf{U}\) with these eigenvectors as its columns, the principal values are the diagonal elements of \(\mathbf{U^\intercal \mathbf{s} \mathbf{U}}\). We have to find the principal axis which is perpendicular to the plane, and the vector normal to a plane can be found using \((\mathbf{c}_1 - \mathbf{c}_2) \times (\mathbf{c}_1 - \mathbf{c}_3)\), where the \(\mathbf{c}_i\)'s are vectors from the origin to different points in the plane (which must not be collinear). Thus, to identify the correct principal axis, we simply need to see which principal axis most closely matches the normal vector (up to a constant factor), which is most easily done by comparing the dot products of each principal axis with the normal vector.
+
+\printbibliography
+
+\end{document}

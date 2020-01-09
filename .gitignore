@@ -13,6 +13,10 @@
 *.log
 *.out
 *.run.xml
+*.synctex.gz
 
 # vim swap files
 *.swp
+
+# I hate MacOS
+**/.DS_Store
