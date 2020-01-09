@@ -120,8 +120,8 @@ if __name__ == '__main__':
     file_lines = open(args.filename, 'r', encoding="utf-8", errors="ignore").readlines()
 
     # Check that the ORCA calculation is of the correct sort
-    correct_file_type = True if 'There are 2 parameter to be scanned' in ''.join(file_lines[:200]) else False
-    correct_file_type = True if 'There are 2 parameter(s) to be scanned' in ''.join(file_lines[:200]) else False
+    correct_file_type = True if ('There are 2 parameter to be scanned' in ''.join(file_lines[:200]) or
+                                 'There are 2 parameter(s) to be scanned' in ''.join(file_lines[:200])) else False
 
     if not correct_file_type:
         exit('ORCA output file was not of the correct format. Exiting')
