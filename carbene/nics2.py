@@ -3,12 +3,13 @@ import sys
 import os
 import platform
 
-if platform.python_version() != "3.5.1":
-    os.system("module load python/3.5")
-    os.system("python3 %s" % __file__)
-    sys.exit()
+if platform.python_version().startswith("2"):
+    sys.exit("") # Python 2
 else:
-    import numpy as np
+    try:
+        import numpy as np
+    except:
+        sys.exit("Please make sure you have numpy installed.")
 
     print("\nInput total shielding tensor: \n")
     stens = []
