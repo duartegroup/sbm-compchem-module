@@ -6,7 +6,7 @@ dl_nics () {
     wget https://raw.githubusercontent.com/duartegroup/sbmcc/master/carbene/nics2 -O ~/nicspy/nics2
     chmod +x ~/nicspy/nics1
     chmod +x ~/nicspy/nics2
-    echo 'export PATH=$HOME/nicspy:$PATH' >> ~/.bash_profile
+    echo "export PATH=\$HOME/nicspy:\$PATH" >> ~/.bash_profile
     source ~/.bash_profile
 }
 
