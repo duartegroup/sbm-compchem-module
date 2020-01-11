@@ -181,10 +181,10 @@ To automate this calculation, first download some helper scripts using:
 source <(wget -O - https://raw.githubusercontent.com/duartegroup/sbmcc/master/carbene/nicsdl.sh)
 \end{cmdline}
 
-This will download two Python scripts to your home directory. \texttt{cd} to there and run
+After this is done, run
 
 \begin{cmdline}
-python nics1.py
+nics1
 \end{cmdline}
 
 At the prompt, paste in the coordinates of the six carbons that form the benzene ring (that should be six lines' worth of \texttt{C   NUMBER   NUMBER   NUMBER}). The script will output a new line starting with \texttt{DA}, which you should then copy and paste back into the geometry in your input file.
@@ -197,13 +197,13 @@ Within the \texttt{\%eprnmr} block, atom labels are counted \textbf{beginning fr
 
 Confusingly, in the \textit{output}, the atom numbering returns to ``normal'' and is counted from 0 again. When the calculation finishes, there will be a section at the bottom of the output file containing a \texttt{CHEMICAL SHIELDING SUMMARY}. Just above that is the \texttt{Total shielding tensor}, which is the quantity of interest here. The NICS value corresponds to one of the three \textit{principal values} of this tensor, with signs reversed. Helpfully, ORCA will calculate these three values, and they are the first three numbers in the \texttt{Total} line under \texttt{Diagonalised sT*s matrix}. But unhelpfully, ORCA doesn't tell you \textit{which} of the three principal values is the one we are actually interested in.
 
-So, we have to do that calculation ourselves. This involves finding the \textit{principal axes} of the shielding tensor, and identifying which of these three axes is perpendicular to the benzene ring. There is also a helper script for that, which can be called from your home directory with
+So, we have to do that calculation ourselves. This involves finding the \textit{principal axes} of the shielding tensor, and identifying which of these three axes is perpendicular to the benzene ring. There is also a helper script for that, which can be called with
 
 \begin{cmdline}
-python nics2.py
+nics2
 \end{cmdline}
 
-At the first prompt, paste in the three lines under \texttt{Total shielding tensor}; and at the second prompt, paste in the coordinates of \textit{any} three atoms from the ring of interest. The script will then calculate which principal value is the correct one to use: make sure that the number it gives you at the end is the same as one of the principal values ORCA calculated (except with reversed sign). This number is the NICS(0)\textsubscript{zz} number: a large negative value indicates aromaticity, whereas a large positive value indicates antiaromaticity.
+At the first prompt, paste in the three lines under \texttt{Total shielding tensor}; and at the second prompt, paste in the coordinates of \textit{any} three heavy atoms from the ring of interest (i.e.\ not hydrogens). The script will then calculate which principal value is the correct one to use: make sure that the number it gives you at the end is the same as one of the principal values ORCA calculated (except with reversed sign). This number is the NICS(0)\textsubscript{zz} number: a large negative value indicates aromaticity, whereas a large positive value indicates antiaromaticity.
 
 For the mathematically inclined, the principal axes are the eigenvectors of \(\mathbf{s}^\intercal \mathbf{s}\) (\(\mathbf{s}\) being the shielding tensor). Given a matrix \(\mathbf{U}\) with these eigenvectors as its columns, the principal values are the diagonal elements of \(\mathbf{U^\intercal \mathbf{s} \mathbf{U}}\). We have to find the principal axis which is perpendicular to the plane, and the vector normal to a plane can be found using \((\mathbf{c}_1 - \mathbf{c}_2) \times (\mathbf{c}_1 - \mathbf{c}_3)\), where the \(\mathbf{c}_i\)'s are vectors from the origin to different points in the plane (which must not be collinear). Thus, to identify the correct principal axis, we simply need to see which principal axis most closely matches the normal vector (up to a constant factor), which is most easily done by comparing the dot products of each principal axis with the normal vector.
 
