@@ -24,6 +24,7 @@ def print_bash_script(inp_filename, ca, cs, notrashtmp):
 
     with open(sh_filename, 'w') as bash_script:
         print('#!/bin/bash', file=bash_script)
+        print('#SBATCH --reservation=training', file=bash_script)
         print('#SBATCH --ntasks-per-node=16', file=bash_script)
         print('#SBATCH --time=14:00:00', file=bash_script)
         print('#SBATCH --job-name=' + inp_filename.replace('.inp', ''), file=bash_script)
