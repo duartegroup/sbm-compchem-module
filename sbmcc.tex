@@ -92,8 +92,8 @@
 
 \begin{tabular}{ll} % alphabetical surname order... And Fernanda should go first!
     \textbf{Tutors:} & Fernanda Duarte (fernanda.duartegonzalez@chem.ox.ac.uk) \\
-     & Jonathan Yong (jonathan.yong@chem.ox.ac.uk) \\
-     & Tom Young (tom.young@balliol.ox.ac.uk)
+     & Henry Chan (ho.chan@chem.ox.ac.uk) \\
+     & Alistair Sterling (alistair.sterling@chem.ox.ac.uk)
 \end{tabular}
 
 \vspace{0.2cm}
@@ -115,7 +115,7 @@ As we go along, there will be certain sections where you are asked to note down 
 
 The cluster we will be using is part of the Advanced Research Computing (ARC) facilities at Oxford (\url{https://help.it.ox.ac.uk/arc/index}). We need to connect to it remotely (via SSH), a functionality which is provided by MobaXterm. When opening MobaXterm for the first time, you may encounter a Windows Firewall prompt: make sure that access over domain networks is allowed.
 
-Click \textbf{Session} (not ``Session\textbf{s}''!) at the top-left corner, then \textbf{SSH}. \marginpar{\small You can skip this in subsequent sessions by using the \textit{Remote sessions} section in the MobaXterm start screen.} In the resulting popup window (\figref{ssh}), enter \texttt{arcus-b.arc.ox.ac.uk} in the \textit{Remote host} box, tick the \textit{Specify username} checkbox, and enter the username you were given. Leave the remainder of the settings unchanged.
+Click \textbf{Session} (not ``Session\textbf{s}''!) at the top-left corner, then \textbf{SSH}. \marginpar{\small You can skip this in subsequent sessions by using the \textit{Remote sessions} section in the MobaXterm start screen.} In the resulting popup window (\figref{ssh}), enter \texttt{arc-login.arc.ox.ac.uk} in the \textit{Remote host} box, tick the \textit{Specify username} checkbox, and enter the username you were given. Leave the remainder of the settings unchanged.
 
 \begin{figure}[H]
     \centering
@@ -135,7 +135,7 @@ Click \textbf{OK}. Enter your password when prompted, then press Enter. You shou
 
 \marginpar{\small Linux, MacOS, and Windows 10 systems have \textit{native} SSH capabilities, meaning that in principle you do not need to install any extra software to connect to a remote server. However, they do not provide the graphical interface in the left side of MobaXterm, so everything must be done exclusively from the terminal.}
 
-Congratulations! You are now logged into the \texttt{arcus-b} cluster: it is from this screen that you will be able to submit calculations and monitor their output.
+Congratulations! You are now logged into the \texttt{ARC} cluster: it is from this screen that you will be able to submit calculations and monitor their output.
 
 \section{Managing files on the cluster}
 
@@ -146,7 +146,7 @@ Although this feature often comes in handy, it is also important to be (somewhat
 The first thing that we notice is that the line you input text on is preceded by a series of characters (called a \textit{prompt}):
 
 \begin{cmdline}
-[username@hostname(arcus-b) ~]$
+[username@hostname(arc-login02) ~]$
 \end{cmdline}
 
 The prompt contains some important information: your username, the hostname (the name of the computer you are connected to), and the current \textit{directory} you are in.\marginpar{\small The dollar sign \texttt{\$} has no particular meaning; it just happens to be one of the most commonly used characters for ending a prompt.} When you first log in, you will always find yourself in your \textit{home directory}, which is conventionally denoted by a tilde \texttt{\textasciitilde}. The command 
