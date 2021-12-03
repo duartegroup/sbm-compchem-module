@@ -4,8 +4,8 @@ import glob
 infiles = glob.glob("*.opt.xyz")
 
 # keywordline = "! PBEh-3c Opt CPCM(Chloroform)"
-print "(opt2sp) Enter keyword line (including exclamation mark): \n >>", # trailing comma removes newline from print
-keywordline = raw_input()
+#print "(opt2sp) Enter keyword line (including exclamation mark): \n >>", # trailing comma removes newline from print
+keywordline = input("(opt2sp) Enter keyword line (including exclamation mark): \n >>")
 nprocsline = "\n\n%pal nprocs 16 end\n\n"
 
 # determine number of atoms
@@ -31,4 +31,4 @@ for infile_name in infiles:
     outfile.write("*\n\n")
     outfile.close()
 
-print "Done."
+print("Done.")
