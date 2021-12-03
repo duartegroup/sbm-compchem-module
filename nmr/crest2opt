@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 # keywordline = "! PBEh-3c Opt CPCM(Chloroform)"
-print "Enter keyword line (including exclamation mark): \n >>", # trailing comma removes newline from print
-keywordline = raw_input()
+keywordline = input("Enter keyword line (including exclamation mark): \n")
 nprocsline = "\n\n%pal nprocs 16 end\n\n"
 
 with open("crest_conformers.xyz", "r") as infile:
@@ -30,5 +29,5 @@ with open("crest_conformers.xyz", "r") as infile:
             outfile.close()
             linecounter = 0
 
-print "Done."
+print("Done.")
 
