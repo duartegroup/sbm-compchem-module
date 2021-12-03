@@ -28,6 +28,8 @@ def print_bash_script(xyz_filename, ca, cs, chrg, g, ewin):
 
     with open(sh_filename, 'w') as bash_script:
         print('#!/bin/bash', file=bash_script)
+        print('#SBATCH --reservation=teaching122021', file=bash_script)
+        #print('#SBATCH --partition=medium', file=bash_script)
         print('#SBATCH --ntasks-per-node=16', file=bash_script)
         print('#SBATCH --time=6:00:00', file=bash_script)
         print('#SBATCH --job-name=' + xyz_filename.replace('.xyz', ''), file=bash_script)
