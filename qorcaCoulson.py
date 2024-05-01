@@ -28,10 +28,10 @@ def get_args():
     parser.add_argument('-v', '--version',
                         action='store',
                         type=str,
-                        choices=['4_1', '4_2'],
-                        default='4_2',
+                        choices=['4_1', '4_2', '5_0'],
+                        default='5_0',
                         help="Which version of ORCA should be used for the "
-                             "calculation? Default: 4.2.1")
+                             "calculation? Default: 5_0_4")
 
     parser.add_argument("-np", "--num_processors",
                         type=int,
@@ -94,11 +94,15 @@ def print_sub_script(sh_filename, inp_filename, args):
         inp_filename (str): Input filename
         args (Namespace): Command line arguments
     """
-
+    
+    mpi_version='mpi/openmpi3-x86_64'
     if args.version == '4_1':
         orca_path = '/usr/local/orca_4_1_1_linux_x86-64/orca'
     elif args.version == '4_2':
         orca_path = '/usr/local/orca_4_2_1_linux_x86-64/orca'
+    elif args.version == '5_0':
+        orca_path = '/usr/local/orca_5_0_3/orca'
+        mpi_version='openmpi4.1.1'
     else:
         exit(f"{args.version} is not a recognised ORCA version")
 
@@ -111,7 +115,7 @@ def print_sub_script(sh_filename, inp_filename, args):
               'export ORIG=$PWD',
               'export SCR=$TMPDIR',
               'export NBOEXE=/usr/local/nbo7/bin/nbo7.i4.exe',
-              'module load mpi/openmpi3-x86_64',
+              f'module load {mpi_version}',
               f'cp {"*" if args.copy_all else inp_filename} $SCR',
               f'cd $SCR',
               f'{orca_path} {inp_filename} > {inp_filename.replace(".inp", ".out")}',
