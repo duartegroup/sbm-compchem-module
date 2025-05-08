@@ -101,7 +101,7 @@ def print_sub_script(sh_filename, inp_filename, args):
     elif args.version == '4_2':
         orca_path = '/usr/local/orca_4_2_1_linux_x86-64/orca'
     elif args.version == '5_0':
-        orca_path = '/usr/local/orca_5_0_3/orca'
+        orca_path = '/usr/local/orca_5_0_4/orca'
         mpi_version='openmpi4.1.1'
     else:
         exit(f"{args.version} is not a recognised ORCA version")
