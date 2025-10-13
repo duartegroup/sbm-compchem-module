@@ -5,7 +5,7 @@ dl_qorca () {
 }
 
 dl_qpython_autode () {
-    wget https://raw.githubusercontent.com/duartegroup/sbm-compchem-module/master/qpythonAutodE.py -O ~/bin/qpython
+    wget https://raw.githubusercontent.com/duartegroup/sbm-compchem-module/master/qpythonARC.py -O ~/bin/qpython
     chmod +x ~/bin/qpython
     if ! command -v conda &> /dev/null; then
         echo "Installing conda..."
