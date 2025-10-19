@@ -43,7 +43,7 @@ def get_args():
     
     parser.add_argument("-t", "--time",
                         action='store',
-                        required=True,
+                        default="2-00:00:00",
                         help='Specify the runtime for the job, in format [d-]hh:mm:ss')
 
     parser.add_argument("-args", '--extra_arguments',
